@@ -11,3 +11,4 @@ dist/
 .cache
 .xprocess
 .vscode
+Pipfile.lock
