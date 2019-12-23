@@ -19,6 +19,7 @@ before-install:
   - sudo apt-get update
   - sudo apt-get -y install libmemcached-dev memcached redis-server
 install:
+  - pip install pipenv
   - pipenv install --dev
 script: pytest
 after_success:
