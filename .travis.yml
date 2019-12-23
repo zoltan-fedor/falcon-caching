@@ -20,11 +20,13 @@ matrix:
 before-install:
   - sudo apt-get update
   - sudo apt-get -y install libmemcached-dev memcached redis-server
+  - pip install codecov
 install:
   - pip install pipenv
   - pipenv install --dev
-script: pytest
+script: pytest --cov-report term-missing
 after_success:
+  - coverage combine
   - codecov
 cache:
   directories:
