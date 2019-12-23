@@ -1,5 +1,7 @@
 [![Documentation Status](https://readthedocs.org/projects/falcon-caching/badge/?version=latest)](https://falcon-caching.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.com/zoltan-fedor/falcon-caching.svg?branch=master)](https://travis-ci.com/zoltan-fedor/falcon-caching)
 [![codecov](https://codecov.io/gh/zoltan-fedor/falcon-caching/branch/master/graph/badge.svg)](https://codecov.io/gh/zoltan-fedor/falcon-caching)
+
 
 # Falcon-Caching
 
