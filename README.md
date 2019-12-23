@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/zoltan-fedor/falcon-caching/branch/master/graph/badge.svg)](https://codecov.io/gh/zoltan-fedor/falcon-caching)
+
 # Falcon-Caching
 
 Cache support added to the [Falcon web framework](https://github.com/falconry/falcon).
