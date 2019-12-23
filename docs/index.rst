@@ -1,15 +1,26 @@
-.. Falcon-Caching documentation master file, created by
-   sphinx-quickstart on Sun Dec 15 18:24:22 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Falcon-Caching's documentation!
 ==========================================
 
+Falcon-Caching adds cache support to the
+`Falcon web framework <https://github.com/falconry/falcon>`_.
+
+It is a port of the popular
+`Flask-Caching <https://github.com/sh4nks/flask-caching>`_ library to Falcon.
+
+The library aims to be compatible with CPython 3.6+ and PyPy 3.5+.
+
+.. include:: quickstart.rst
+
+
+.. _Documentation:
+
+Documentation
+-------------
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
+   introduction
 
 
 .. _API Reference:
@@ -20,9 +31,10 @@ API Reference
 If you are looking for information on a specific function, class or
 method of a service, then this part of the documentation is for you.
 
-.. automodule:: falcon_caching.__init__
-   :members:
+.. toctree::
+   :maxdepth: 2
 
+   api_reference/index
 
 
 Indices and tables

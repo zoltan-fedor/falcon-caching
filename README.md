@@ -2,15 +2,67 @@
 
 Cache support added to the [Falcon web framework](https://github.com/falconry/falcon).
 
-This is a port of the popular [Flask-Caching](https://github.com/sh4nks/flask-caching) library
+It is a port of the popular [Flask-Caching](https://github.com/sh4nks/flask-caching) library.
 
-The library aims to be compatible with CPython 3.5+ and PyPy 3.5+.
+The library aims to be compatible with CPython 3.6+ and PyPy 3.5+.
 
 
 ## Documentation
 
 You can find the documentation of this library on [Read the Docs](https://falcon-caching.readthedocs.io/en/latest/).
 
+
+## Quickstart
+
+
+Quick example:
+```
+import falcon
+from falcon_caching import Cache
+
+# setup the caching
+cache = Cache(config={'CACHE_TYPE': 'simple'})
+
+
+class ThingsResource:
+
+    # mark the method as cached
+    @cache.cached(timeout=600)
+    def on_get(self, req, resp):
+        pass
+
+
+# add the cache middleware
+app = falcon.API(middleware=cache.middleware)
+
+things = ThingsResource()
+
+app.add_route('/things', things)
+```
+
+Alternatively you could cache the whole resource:
+```
+# mark the whole resource as cached
+@cache.cached(timeout=600)
+class ThingsResource:
+
+    def on_get(self, req, resp):
+        pass
+
+    def on_post(self, req, resp):
+        pass
+```
+
+> **NOTE:**  
+> Be careful with the order of middlewares. The `cache.middleware` will
+short-circuit any further processing if a cached version of that resource is found.
+It will skip any remaining `process_request` and `process_resource` methods,
+as well as the `responder` method that the request would have been routed to.
+However, any `process_response` middleware methods will still be called.
+>
+> This is why it is suggested that you add the `cache.middleware` **following** any
+authentication / authorization middlewares to avoid unauthorized access of records
+served from the cache.
 
 ## Development
 
@@ -28,6 +80,18 @@ $ python -m http.server 8088
 
 Now you can access the documentation locally under `http://127.0.0.1:8088/_build/html/`
 
+### Development environment
+
+To be able to test memcached the `pylibmc` library will be installed, which requires
+the memcached source to compile, so you will need to install libmemcached-dev first:
+```
+$ sudo apt-get install libmemcached-dev
+```
+
+You also need Memcached and Redis to be installed to be able to test against those:
+```
+$ sudo apt-get install memcached redis-server
+```
 
 ## Credits
 

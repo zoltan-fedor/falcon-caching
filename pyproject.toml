@@ -10,7 +10,6 @@ home-page = "https://github.com/zoltan-fedor/falcon-caching"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Web Environment",
-    "Framework :: Falcon",
     "License :: OSI Approved :: MIT License",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
@@ -22,6 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     "Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware",
@@ -32,16 +32,23 @@ requires = [
     "falcon >=1.0.0"
 ]
 description-file = "README.md"
-requires-python = ">=3.5"
+requires-python = ">=3.6"
 
 [tool.flit.metadata.urls]
 Documentation = "https://falcon-caching.readthedocs.io/en/latest/"
 
 [tool.flit.metadata.requires-extra]
 test = [
+    "flit",
+    "pylibmc",
     "pytest >=4.0.0",
     "pytest-cov",
+    "pytest-pep8",
     "pytest-xdist",
+    "pytest-xprocess",
+    "redis",
+    "tox",
+    "tox-pipenv-install",
     "mypy"
 ]
 doc = []

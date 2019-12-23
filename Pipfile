@@ -4,16 +4,25 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+autodoc = "*"
 bump2version = "*"
 flit = "*"
+importlib-metadata = "*"
+pylibmc = "*"
 pytest = "*"
 pytest-cov = "*"
+pytest-pep8 = "*"
 pytest-xdist = "*"
+pytest-xprocess = "*"
+redis = "*"
 mypy = "*"
 sphinx = "*"
-autodoc = "*"
+tox = "*"
+tox-pipenv-install = "*"
+uwsgi = "*"
 
 [packages]
+falcon = "*"
 
 [requires]
 python_version = "3.8"

@@ -1,4 +1,4 @@
-.PHONY: help venv vulnerability-scan lint test
+.PHONY: help venv vulnerability-scan lint test tox tox-recreate
 
 .DEFAULT: help
 help:
@@ -13,6 +13,13 @@ help:
 	@echo " "
 	@echo "make test"
 	@echo "    runs the tests"
+	@echo " "
+	@echo "make tox"
+	@echo "    runs tox - tests in all environments"
+	@echo " "
+	@echo "make tox-recreate"
+	@echo "    makes tox to recreate all its virtual environments before running the tests."
+	@echo "    This is required everytime when package dependencies change!"
 	@echo " "
 	@echo "make docs"
 	@echo "    builds the html docs which becomes available under docs/_build/html"
@@ -30,7 +37,13 @@ lint:
 	mypy falcon_caching --ignore-missing-imports
 
 test:
-	pytest
+	pytest --cov-report term-missing
+
+tox:
+	tox
+
+tox-recreate:
+	tox --recreate
 
 docs:
 	cd docs && \

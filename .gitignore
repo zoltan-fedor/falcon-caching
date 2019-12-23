@@ -11,4 +11,6 @@ dist/
 .cache
 .xprocess
 .vscode
+.mypy_cache
 Pipfile.lock
+todos.txt
