@@ -2,15 +2,24 @@ language: python
 os: linux
 dist: bionic
 sudo: required
-python:
-  - "3.6"
-  - "3.7"
-  - "3.8"
-  - "pypy3.5-6.0"
+matrix:
+  include:
+    # see supported Python versions at https://docs.travis-ci.com/user/languages/python/
+    - python: 3.6
+      dist: bionic
+    - python: 3.7
+      dist: bionic
+    - python: 3.8
+      dist: bionic
+    - python: pypy3.5
+      dist: xenial
+    - python: pypy3.6-7.2.0
+      dist: bionic
 before-install:
   - sudo apt-get update
   - sudo apt-get -y install libmemcached-dev memcached redis-server
 install:
+  - pipenv install
   - pipenv install --dev
 script: pytest
 after_success:
