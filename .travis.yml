@@ -11,7 +11,7 @@ matrix:
       dist: bionic
     - python: 3.8
       dist: bionic
-    # unfortunately PyPy is not working on PyPy 3.5
+    # unfortunately Pipenv is not working on PyPy 3.5
     # see https://github.com/pypa/pipenv/issues/3313
     # - python: pypy3.5
     #   dist: xenial
@@ -34,3 +34,4 @@ env:
   global:
     - PIP_CACHE_DIR=$HOME/.cache/pip
     - PIPENV_CACHE_DIR=$HOME/.cache/pipenv
+    - TRAVIS=yes

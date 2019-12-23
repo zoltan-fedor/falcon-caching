@@ -37,7 +37,7 @@ lint:
 	mypy falcon_caching --ignore-missing-imports
 
 test:
-	pytest --cov-report term-missing
+	pytest -x --cov-report term-missing
 
 tox:
 	tox
