@@ -19,7 +19,6 @@ before-install:
   - sudo apt-get update
   - sudo apt-get -y install libmemcached-dev memcached redis-server
 install:
-  - pipenv install
   - pipenv install --dev
 script: pytest
 after_success:
@@ -32,5 +31,3 @@ env:
   global:
     - PIP_CACHE_DIR=$HOME/.cache/pip
     - PIPENV_CACHE_DIR=$HOME/.cache/pipenv
-    - PIPENV_VENV_IN_PROJECT=1
-    - PIPENV_IGNORE_VIRTUALENVS=1
