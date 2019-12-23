@@ -233,7 +233,7 @@ class SASLMemcachedCache(MemcachedCache):
 
 class SpreadSASLMemcachedCache(SASLMemcachedCache):
     """Simple Subclass of SASLMemcached client that will spread the value
-    across multiple keys if they are bigger than a given treshhold.
+    across multiple keys if they are bigger than a given treshold.
 
     Spreading requires using pickle to store the value, which can significantly
     impact the performance.

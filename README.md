@@ -93,6 +93,14 @@ You also need Memcached and Redis to be installed to be able to test against tho
 $ sudo apt-get install memcached redis-server
 ```
 
+You will also need Pyton 3.6-3.8 and PyPy3 and its source package installed to run
+tox in all environments.
+
+Unfortunately MyPy breaks the PyPy tests due to the typed-ast package's "bug":
+https://github.com/python/typed_ast/issues/97 and with Pipenv you can't really
+have a different Pipfile, so it would try to install it and fail, so for now
+we don't have mypy listed as a dev dependency in Pipfile.
+
 ## Credits
 
 As this is a port of the popular [Flask-Caching](https://github.com/sh4nks/flask-caching) library

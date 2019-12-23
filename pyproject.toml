@@ -48,8 +48,7 @@ test = [
     "pytest-xprocess",
     "redis",
     "tox",
-    "tox-pipenv-install",
-    "mypy"
+    "tox-pipenv-install"
 ]
 doc = []
 dev = []
