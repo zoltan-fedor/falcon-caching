@@ -76,3 +76,7 @@ napoleon_numpy_docstring = False
 html_sidebars = {
     '**': ['globaltoc.html', 'relations.html', 'searchbox.html']
 }
+
+# to ensure the read-the-docs will find it,
+# see https://github.com/readthedocs/readthedocs.org/issues/2569
+master_doc = 'index'
