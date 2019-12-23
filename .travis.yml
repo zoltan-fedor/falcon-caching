@@ -7,11 +7,11 @@ python:
   - "3.7"
   - "3.8"
   - "pypy3.5-6.0"
+before-install:
+  - sudo apt-get update
+  - sudo apt-get -y install libmemcached-dev memcached redis-server
 install:
-  - apt-get install libmemcached-dev memcached redis-server
   - pipenv install --dev
-  - pip install coveralls
-  - pip install --editable .
 script: pytest
 after_success:
   - codecov
