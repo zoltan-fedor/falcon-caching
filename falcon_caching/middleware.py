@@ -56,7 +56,11 @@ class Middleware:
         key = self.generate_cache_key(req)
         data = self.cache.get(key)
 
-        if data:
+        # "or self.cache.has(key)" was required, because 'data' can be None for one of two reasons:
+        #   (1) - the given key wasn't cached yet
+        #   (2) - the given key is cached, but the endpoint has returned None in its body
+        # which is why if it is None then we also need to check for (2)
+        if data or self.cache.has(key):
             resp.body = data
             resp.status = HTTP_200
             req.context['cached'] = True

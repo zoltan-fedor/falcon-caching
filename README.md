@@ -93,12 +93,12 @@ the memcached source to compile, so you will need to install libmemcached-dev fi
 $ sudo apt-get install libmemcached-dev
 ```
 
-You also need Memcached and Redis to be installed to be able to test against those:
+You also need Memcached, Redis and Redis Sentinel to be installed to be able to test against those:
 ```
-$ sudo apt-get install memcached redis-server
+$ sudo apt-get install memcached redis-server redis-sentinel
 ```
 
-You will also need Pyton 3.6-3.8 and PyPy3 and its source package installed to run
+You will also need Python 3.6-3.8 and PyPy3 and its source package installed to run
 tox in all environments.
 
 Unfortunately MyPy breaks the PyPy tests due to the typed-ast package's "bug":

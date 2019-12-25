@@ -1,0 +1,9 @@
+[run]
+branch = True
+source = falcon_caching
+# omit = falcon_caching/tests*,falcon_caching/cmd*
+
+parallel = True
+
+[report]
+show_missing = True

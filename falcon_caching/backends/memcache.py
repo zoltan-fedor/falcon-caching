@@ -86,7 +86,21 @@ class MemcachedCache(BaseCache):
     def _normalize_timeout(self, timeout):
         timeout = BaseCache._normalize_timeout(self, timeout)
         if timeout > 0:
-            timeout = int(time()) + timeout
+            # NOTE: pylibmc expect the timeout as delta time up to
+            # 2592000 seconds (30 days)
+            if not hasattr(self, 'mc_library'):
+                try:
+                    import pylibmc
+                except ImportError:
+                    self.mc_library = None
+                else:
+                    self.mc_library = 'pylibmc'
+
+            if self.mc_library != 'pylibmc':
+                timeout = int(time()) + timeout
+            elif timeout > 2592000:
+                timeout = 0
+
         return timeout
 
     def get(self, key):
@@ -183,6 +197,7 @@ class MemcachedCache(BaseCache):
         except ImportError:
             pass
         else:
+            self.mc_library = 'pylibmc'
             return pylibmc.Client(servers)
 
         try:
@@ -190,6 +205,7 @@ class MemcachedCache(BaseCache):
         except ImportError:
             pass
         else:
+            self.mc_library = 'google.appengine.api'
             return memcache.Client()
 
         try:
@@ -197,6 +213,7 @@ class MemcachedCache(BaseCache):
         except ImportError:
             pass
         else:
+            self.mc_library = 'memcache'
             return memcache.Client(servers)
 
         try:
@@ -204,6 +221,7 @@ class MemcachedCache(BaseCache):
         except ImportError:
             pass
         else:
+            self.mc_library = 'libmc'
             return libmc.Client(servers)
 
 
@@ -322,3 +340,6 @@ class SpreadSASLMemcachedCache(SASLMemcachedCache):
             return None
 
         return pickle.loads(serialized)
+
+    def has(self, key):
+        return super().has("%s.%s" % (key, 0))

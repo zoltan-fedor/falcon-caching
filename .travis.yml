@@ -19,7 +19,7 @@ matrix:
       dist: bionic
 before-install:
   - sudo apt-get update
-  - sudo apt-get -y install libmemcached-dev memcached redis-server
+  - sudo apt-get -y install libmemcached-dev memcached redis-server redis-sentinel
   - pip install codecov
 install:
   - pip install pipenv
