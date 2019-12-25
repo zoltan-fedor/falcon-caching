@@ -65,8 +65,8 @@ def caches(request, tmp_path, redis_server, redis_sentinel_server, memcache_serv
     """ Time-based cache parametrized to generate a cache
     for each cache_type (eg backend)
     """
-    if request.param == 'redissentinel' and os.getenv('TRAVIS', 'no') == 'yes':
-        pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+    # if request.param == 'redissentinel' and os.getenv('TRAVIS', 'no') == 'yes':
+    #     pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
 
     # uwsgi tests should only run if running under uwsgi
     if request.param == 'uwsgi':
