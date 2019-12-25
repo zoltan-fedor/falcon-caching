@@ -65,8 +65,8 @@ def caches(request, tmp_path, redis_server, redis_sentinel_server, memcache_serv
     """ Time-based cache parametrized to generate a cache
     for each cache_type (eg backend)
     """
-    # if request.param == 'redissentinel' and os.getenv('TRAVIS', 'no') == 'yes':
-    #     pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+    if request.param == 'redissentinel' and os.getenv('TRAVIS', 'no') == 'yes':
+        pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
 
     # uwsgi tests should only run if running under uwsgi
     if request.param == 'uwsgi':
@@ -127,30 +127,35 @@ def redis_server(xprocess):
 
 @pytest.fixture(scope="class")
 def redis_sentinel_server(xprocess, redis_server):
-    try:
-        import redis
-    except ImportError:
-        pytest.skip("Python package 'redis' is not installed.")
+    # on Travis there is no redis-sentinel, so we need to skip this,
+    # but can't use pytest.skip() as that would bubble up to all tests
+    if os.getenv('TRAVIS', 'no') == 'yes':
+        yield
+    else:
+        try:
+            import redis
+        except ImportError:
+            pytest.skip("Python package 'redis' is not installed.")
 
-    # copy the sentinel_original.conf to sentinel.conf, as sentinel
-    # will modify it
-    shutil.copy("tests/sentinel_original.conf", "tests/sentinel.conf")
+        # copy the sentinel_original.conf to sentinel.conf, as sentinel
+        # will modify it
+        shutil.copy("tests/sentinel_original.conf", "tests/sentinel.conf")
 
-    class Starter(ProcessStarter):
-        pattern = "monitor master mymaster"
-        args = ["redis-sentinel", f"{os.getcwd()}/tests/sentinel.conf"]
+        class Starter(ProcessStarter):
+            pattern = "monitor master mymaster"
+            args = ["redis-sentinel", f"{os.getcwd()}/tests/sentinel.conf"]
 
-    try:
-        xprocess.ensure("redis_sentinel_server", Starter)
-    except IOError as e:
-        # xprocess raises FileNotFoundError
-        if e.errno == errno.ENOENT:
-            pytest.skip("Redis Sentinel is not installed.")
-        else:
-            raise
+        try:
+            xprocess.ensure("redis_sentinel_server", Starter)
+        except IOError as e:
+            # xprocess raises FileNotFoundError
+            if e.errno == errno.ENOENT:
+                pytest.skip("Redis Sentinel is not installed.")
+            else:
+                raise
 
-    yield
-    xprocess.getinfo("redis_sentinel_server").terminate()
+        yield
+        xprocess.getinfo("redis_sentinel_server").terminate()
 
 
 @pytest.fixture(scope="class")
