@@ -19,8 +19,10 @@ matrix:
       dist: bionic
 before-install:
   - sudo apt-get update
-  # - sudo apt-get -y --allow-downgrades install redis-tools=5:4.0.9-1ubuntu0.2
-  - sudo apt-get -y install libmemcached-dev memcached redis-sentinel
+  # redis-sentinel install fails in bionic on Travis CI due to dependencies,
+  # so we can't test the Redis Sentinel backed on Travis only locally
+  # - sudo apt-get -y install libmemcached-dev memcached redis-server redis-sentinel
+  - sudo apt-get -y install libmemcached-dev memcached redis-server
   - pip install codecov
 install:
   - pip install pipenv
