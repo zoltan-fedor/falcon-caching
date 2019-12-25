@@ -127,9 +127,6 @@ def redis_server(xprocess):
 
 @pytest.fixture(scope="class")
 def redis_sentinel_server(xprocess, redis_server):
-    if os.getenv('TRAVIS', 'no') == 'yes':
-        pytest.skip("On Travis Redis Sentinel currently can't be installed")
-
     try:
         import redis
     except ImportError:
