@@ -14,6 +14,9 @@ help:
 	@echo "make test"
 	@echo "    runs the tests"
 	@echo " "
+	@echo "make travis-test"
+	@echo "    runs the tests like they would run on Travis (where some tests are skipped)"
+	@echo " "
 	@echo "make tox"
 	@echo "    runs tox - tests in all environments"
 	@echo " "
@@ -38,6 +41,9 @@ lint:
 
 test:
 	pytest -x --cov-report term-missing
+
+test-travis:
+	TRAVIS='yes' pytest -x --cov-report term-missing
 
 tox:
 	tox

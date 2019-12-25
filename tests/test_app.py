@@ -13,7 +13,7 @@ from falcon_caching.backends.redis import Redis, RedisSentinel
 from falcon_caching.backends.filesystem import FileSystemCache
 from falcon_caching.backends.simple import SimpleCache
 from tests.conftest import CACHE_EXPIRES, CACHE_BUSTING_METHODS
-from tests.utils import get_cache_class, get_cache_eviction_strategy,\
+from tests.utils import get_cache, get_cache_class, get_cache_eviction_strategy,\
     delete_from_cache
 
 
@@ -126,3 +126,58 @@ def test_rest_action_expires_cache(client):
 
             result4 = client.simulate_get('/randrange_cached')
             assert result3.json['num'] != result4.json['num']
+
+
+def test_explicit_caching(caches):
+    """ Testing of explicit caching and retrieving of records
+    """
+    # it is sufficient to test it with one type of cache
+    cache = caches['time-based']
+
+    # delete the 'foo21' record to be sure that it is not left in the cache
+    cache.delete_many("foo21", "foo22", "foo23", "foo24", "foo25")
+
+    assert cache.has("foo21") is False
+
+    cache.set("foo21", "bar")
+    assert cache.has("foo21") is True
+
+    # add() does not overwrite existing keys
+    cache.add("foo21", "bar2")
+    assert cache.get("foo21") == 'bar'
+
+    # for SpreadSASLMemcachedCache the add() doesn't work
+    if cache.cache.__class__ not in [SpreadSASLMemcachedCache]:
+        cache.add("foo22", "bar2")
+    else:
+        cache.set("foo22", "bar2")
+    assert cache.get("foo22") == 'bar2'
+
+    # for SpreadSASLMemcachedCache the add() doesn't work
+    if cache.cache.__class__ not in [SpreadSASLMemcachedCache]:
+        assert cache.get_many("foo21", "foo22") == ["bar", "bar2"]
+        assert cache.get_dict("foo21", "foo22") == {"foo21": "bar", "foo22": "bar2"}
+
+    cache.set_many({"foo23": "bar3", "foo24": "bar4"})
+    assert cache.get_many("foo23", "foo24") == ["bar3", "bar4"]
+
+    # for SpreadSASLMemcachedCache the add() doesn't work
+    if cache.cache.__class__ not in [SpreadSASLMemcachedCache]:
+        cache.delete_many("foo21", "foo22")
+        assert cache.has("foo21") is False
+        assert cache.has("foo22") is False
+
+        assert cache.has("foo23") is True
+        assert cache.has("foo24") is True
+        cache.clear()
+        assert cache.has("foo23") is False
+        assert cache.has("foo24") is False
+
+    # these only work for Redis
+    if cache.cache.__class__ in [Redis, RedisSentinel]:
+        cache.set("foo25", 1)
+        cache.inc("foo25")
+        assert cache.get("foo25") == 2
+
+        cache.dec("foo25")
+        assert cache.get("foo25") == 1

@@ -6,9 +6,8 @@ Quickstart
     import falcon
     from falcon_caching import Cache
 
-    # setup the caching
+    # setup the cache instance
     cache = Cache(config={'CACHE_TYPE': 'simple'})
-
 
     class ThingsResource:
 
@@ -17,8 +16,7 @@ Quickstart
         def on_get(self, req, resp):
             pass
 
-
-    # add the cache middleware
+    # create the app with the cache middleware
     app = falcon.API(middleware=cache.middleware)
 
     things = ThingsResource()
@@ -26,7 +24,7 @@ Quickstart
     app.add_route('/things', things)
 ..
 
-Alternatively you could cache the whole resource (watch our for
+Alternatively you could cache the **whole resource** (watch out for
 issues mentioned in :ref:`resource-level-caching`):
 
 .. code-block:: python
@@ -42,7 +40,7 @@ issues mentioned in :ref:`resource-level-caching`):
             pass
 ..
 
-.. note::
+.. warning::
     Be careful with the order of middlewares. The ``cache.middleware`` will
     short-circuit any further processing if a cached version of that resource is found.
     It will skip any remaining ``process_request`` and ``process_resource`` methods,
@@ -51,6 +49,6 @@ issues mentioned in :ref:`resource-level-caching`):
 
     This is why it is suggested that you add the ``cache.middleware`` **following** any
     authentication / authorization middlewares to avoid unauthorized access of records
-    served from the cache.
+    served directly from the cache.
 
 

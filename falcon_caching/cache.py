@@ -1,5 +1,5 @@
 from inspect import isclass
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 from falcon_caching.middleware import Middleware
 from falcon_caching.options import CacheEvictionStrategy
@@ -90,3 +90,67 @@ class Cache:
                 return cache_wrap
 
         return wrap1
+
+    def has(self, *args, **kwargs) -> bool:
+        """It determines if the given key is in the cache."""
+        _h = self.cache.has(*args, **kwargs)
+        # the Redis backend returns 0 for not existing keys
+        if isinstance(_h, bool):
+            return _h
+        elif isinstance(_h, int):
+            return False if _h == 0 else True
+        else:
+            raise ValueError(f"has() returned an unknown value '{_h}'")
+
+    def get(self, *args, **kwargs) -> Any:
+        """It returns the value for the given key from the cache."""
+        return self.cache.get(*args, **kwargs)
+
+    def set(self, *args, **kwargs) -> bool:
+        """It stores the given key and value in the cache."""
+        return self.cache.set(*args, **kwargs)
+
+    def add(self, *args, **kwargs) -> bool:
+        """It adds a given key and value to the cache, but only
+        if no record which such key already exists.
+        """
+        return self.cache.add(*args, **kwargs)
+
+    def delete(self, *args, **kwargs) -> bool:
+        """It deletes the cached record based on the provided key."""
+        return self.cache.delete(*args, **kwargs)
+
+    def delete_many(self, *args, **kwargs) -> bool:
+        """It deletes all cached record matching the list of keys provided."""
+        return self.cache.delete_many(*args, **kwargs)
+
+    def clear(self) -> bool:
+        """It clears all cache - if the `CACHE_KEY_PREFIX` config attribute
+        is used then it only removes key starting with that prefix, otherwise
+        it flushes the whole database."""
+        return self.cache.clear()
+
+    def get_many(self, *args, **kwargs) -> List[Any]:
+        """It returns the list of values matching the list of keys."""
+        return self.cache.get_many(*args, **kwargs)
+
+    def set_many(self, *args, **kwargs) -> bool:
+        """It stores multiple records based on the dictionary of keys
+        and values provided."""
+        return self.cache.set_many(*args, **kwargs)
+
+    def get_dict(self, *args, **kwargs) -> Dict[Any, Any]:
+        """It returns the keys and values as dictionary for all requested keys."""
+        return self.cache.get_dict(*args, **kwargs)
+
+    def inc(self, *args, **kwargs) -> Optional[int]:
+        """It increments and returns the value of a numerical cache record.
+        Only works for Redis and Redis Sentinel!
+        """
+        return self.cache.inc(*args, **kwargs)
+
+    def dec(self, *args, **kwargs) -> Optional[int]:
+        """It decrements and returns the value of a numerical cache record.
+        Only works for Redis and Redis Sentinel!
+        """
+        return self.cache.dec(*args, **kwargs)

@@ -80,3 +80,16 @@ html_sidebars = {
 # to ensure the read-the-docs will find it,
 # see https://github.com/readthedocs/readthedocs.org/issues/2569
 master_doc = 'index'
+
+# Custom sidebar templates, maps document names to template names.
+#
+# Custom sidebar templates, maps document names to template names.
+html_sidebars = {
+    '**': [
+        'about.html',
+        'localtoc.html',
+        'sidebarlinks.html',
+        'relations.html',
+        'searchbox.html',
+    ]
+}
