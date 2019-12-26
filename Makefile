@@ -1,4 +1,4 @@
-.PHONY: help venv vulnerability-scan lint test tox tox-recreate
+.PHONY: help venv vulnerability-scan lint test travis-test tox tox-recreate docs server-docs bumpversion-patch bumpversion-minor
 
 .DEFAULT: help
 help:
@@ -29,6 +29,12 @@ help:
 	@echo " "
 	@echo "make serve-docs"
 	@echo "    serves the docs from docs/_build/html by making it available under http://127.0.0.1:8088/_build/html/"
+	@echo " "
+	@echo "make bumpversion-patch"
+	@echo "    bump the patch version"
+	@echo " "
+	@echo "make bumpversion-minor"
+	@echo "    bump the minor version"
 
 venv:
 	pipenv shell
@@ -58,3 +64,13 @@ docs:
 serve-docs:
 	cd docs && \
 	python -m http.server 8088
+
+bumpversion-patch:
+	bump2version patch
+	cd docs && \
+	make html
+
+bumpversion-minor:
+	bump2version minor
+	cd docs && \
+	make html

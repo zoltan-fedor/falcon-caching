@@ -1,6 +1,8 @@
 Welcome to Falcon-Caching's documentation!
 ==========================================
 
+Version: 0.1.1
+
 Falcon-Caching adds cache support to the
 `Falcon web framework <https://github.com/falconry/falcon>`_.
 
