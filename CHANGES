@@ -4,8 +4,8 @@ Changelog
 Version 0.2.0
 -------------
 
-- The `request_body` is not longer included in the cache key, `see <https://github.com/zoltan-fedor/falcon-caching/issues/3>`_
-
+- The `request_body` is no longer included in the cache key, `see <https://github.com/zoltan-fedor/falcon-caching/issues/3>`_
+- Added a safer method to identify the `on_` methods to decorate, `see <https://github.com/zoltan-fedor/falcon-caching/issues/4>`_
 
 Version 0.1.0
 -------------

@@ -1,9 +1,13 @@
-from falcon import HTTP_200
+from falcon import HTTP_200, COMBINED_METHODS
 from falcon_caching.options import CacheEvictionStrategy, HttpMethods
+import re
 from typing import TYPE_CHECKING, Any, Dict
 
 if TYPE_CHECKING:
     from falcon_caching.cache import Cache
+
+_DECORABLE_METHOD_NAME = re.compile(r'^on_({})(_\w+)?$'.format(
+    '|'.join(method.lower() for method in COMBINED_METHODS)))
 
 
 class Middleware:
@@ -39,7 +43,7 @@ class Middleware:
         # find out which responder ("on_..." method) is going to be used to process this request
         responder = None
         for _method in dir(resource):
-            if _method.startswith('on_') and _method[3:].upper() == req.method.upper():
+            if _DECORABLE_METHOD_NAME.match(_method) and _method[3:].upper() == req.method.upper():
                 responder = _method
                 break
 

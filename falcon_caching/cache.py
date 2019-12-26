@@ -1,7 +1,7 @@
 from inspect import isclass
 from typing import Any, Dict, List, Optional
 
-from falcon_caching.middleware import Middleware
+from falcon_caching.middleware import Middleware, _DECORABLE_METHOD_NAME
 from falcon_caching.options import CacheEvictionStrategy
 
 
@@ -74,7 +74,7 @@ class Cache:
             if isclass(class_or_method):
                 # get all methods of the class that needs to be decorated (eg start with "on_"):
                 for attr in dir(class_or_method):
-                    if callable(getattr(class_or_method, attr)) and attr.startswith("on_"):
+                    if callable(getattr(class_or_method, attr)) and _DECORABLE_METHOD_NAME.match(attr):
                         # decorate the given method:
                         setattr(class_or_method, attr, wrap1(getattr(class_or_method, attr)))
 
