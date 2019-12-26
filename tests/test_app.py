@@ -1,9 +1,14 @@
 """ Functional tests to test an example app with the different
 cache backends and eviction strategies
 """
+import json
+import os
 import pytest
+import random
 import time
 
+from falcon import API, testing
+from falcon_caching import Cache
 from falcon_caching.backends.memcache import (
     MemcachedCache,
     SASLMemcachedCache,
@@ -12,7 +17,8 @@ from falcon_caching.backends.memcache import (
 from falcon_caching.backends.redis import Redis, RedisSentinel
 from falcon_caching.backends.filesystem import FileSystemCache
 from falcon_caching.backends.simple import SimpleCache
-from tests.conftest import CACHE_EXPIRES, CACHE_BUSTING_METHODS
+from tests.conftest import CACHE_EXPIRES, CACHE_BUSTING_METHODS, CACHE_TYPES,\
+    EVICTION_STRATEGIES, REDIS_PORT, CACHE_THRESHOLD
 from tests.utils import get_cache, get_cache_class, get_cache_eviction_strategy,\
     delete_from_cache
 
@@ -181,3 +187,103 @@ def test_explicit_caching(caches):
 
         cache.dec("foo25")
         assert cache.get("foo25") == 1
+
+
+@pytest.mark.parametrize("eviction_strategy", [
+    *EVICTION_STRATEGIES
+])
+def test_caching_content_type(caches, eviction_strategy):
+    """ Testing that the Content-Type header gets cached
+    even when it is not the default, but it is set in the responder
+    """
+    # get the cache for the given eviction strategy
+    cache = caches[eviction_strategy]
+
+    # a resource where a custom response Cache-Type is set
+    class CachedResource:
+        @cache.cached(timeout=1)
+        def on_get(self, req, resp):
+            resp.content_type = 'mycustom/verycustom'
+            resp.body = json.dumps({'num': random.randrange(0, 100000)})
+
+    app = API(middleware=cache.middleware)
+    app.add_route('/randrange_cached', CachedResource())
+
+    client = testing.TestClient(app)
+
+    # the first call will cache it
+    result1 = client.simulate_get('/randrange_cached')
+    assert result1.headers['Content-Type'] == 'mycustom/verycustom'
+
+    # the second call returns it from cache - but it still carries
+    # the same content-type
+    result2 = client.simulate_get('/randrange_cached')
+    assert result1.json['num'] == result2.json['num']
+    assert result2.headers['Content-Type'] == 'mycustom/verycustom'
+
+
+@pytest.mark.parametrize("cache_type", [
+    *CACHE_TYPES
+])
+@pytest.mark.parametrize("eviction_strategy", [
+    *EVICTION_STRATEGIES
+])
+def test_caching_content_type_json_only(tmp_path, redis_server, redis_sentinel_server,
+                                        memcache_server, cache_type, eviction_strategy):
+    """ Testing that the Content-Type header does NOT get cached
+    when the CACHE_CONTENT_TYPE_JSON_ONLY = True is set, which means
+    that no msgpack serialization is used in this case, which should mean this
+    gives a nice performance bump when the Content-Type header caching is
+    not required because the application/json Content-Type (which is the default
+    in Falcon) is sufficient for the app.
+    """
+    if cache_type == 'redissentinel' and os.getenv('TRAVIS', 'no') == 'yes':
+        pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+
+    # uwsgi tests should only run if running under uwsgi
+    if cache_type == 'uwsgi':
+        try:
+            import uwsgi
+        except ImportError:
+            pytest.skip("uWSGI could not be imported, are you running under uWSGI?")
+            return None
+
+    if 1 == 1:
+        cache = Cache(
+            config={
+                'CACHE_EVICTION_STRATEGY': eviction_strategy,
+                'CACHE_TYPE': cache_type,
+                'CACHE_THRESHOLD': CACHE_THRESHOLD,
+                'CACHE_DIR': tmp_path if cache_type == 'filesystem' else None,
+                'CACHE_REDIS_PORT': REDIS_PORT,
+                'CACHE_CONTENT_TYPE_JSON_ONLY': True  # this is what we are testing here!
+            }
+        )
+
+        # a resource where a custom response Cache-Type is set
+        class CachedResource:
+            @cache.cached(timeout=1)
+            def on_get(self, req, resp):
+                resp.content_type = 'mycustom/verycustom'
+                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+
+        app = API(middleware=cache.middleware)
+        app.add_route('/randrange_cached', CachedResource())
+
+        client = testing.TestClient(app)
+
+        # before making the first call let's ensure that the cache is empty
+        if cache_type == 'memcached':
+            cache.cache.delete("/randrange_cached:GET")
+        else:
+            cache.clear()
+
+        # the first call will cache it
+        result1 = client.simulate_get('/randrange_cached')
+        assert result1.headers['Content-Type'] == 'mycustom/verycustom'
+
+        # the second call returns it from cache - but as the content-type
+        # is NOT cached, it will return the default 'application/json' type
+        result2 = client.simulate_get('/randrange_cached')
+        assert result1.json['num'] == result2.json['num']
+        assert result2.headers['Content-Type'] == 'application/json'

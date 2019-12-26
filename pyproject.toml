@@ -30,7 +30,8 @@ classifiers = [
     "Typing :: Typed"
 ]
 requires = [
-    "falcon >=1.0.0"
+    "falcon >=1.0.0",
+    "msgpack"
 ]
 description-file = "README.md"
 requires-python = ">=3.6"

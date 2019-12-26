@@ -1,7 +1,8 @@
 from falcon import HTTP_200, COMBINED_METHODS
 from falcon_caching.options import CacheEvictionStrategy, HttpMethods
 import re
-from typing import TYPE_CHECKING, Any, Dict
+import msgpack
+from typing import TYPE_CHECKING, Any, Dict, Tuple
 
 if TYPE_CHECKING:
     from falcon_caching.cache import Cache
@@ -60,12 +61,13 @@ class Middleware:
         key = self.generate_cache_key(req)
         data = self.cache.get(key)
 
-        # "or self.cache.has(key)" was required, because 'data' can be None for one of two reasons:
-        #   (1) - the given key wasn't cached yet
-        #   (2) - the given key is cached, but the endpoint has returned None in its body
-        # which is why if it is None then we also need to check for (2)
-        if data or self.cache.has(key):
-            resp.body = data
+        if data:
+            # if the CACHE_CONTENT_TYPE_JSON_ONLY = True, then we are NOT
+            # caching the response's Content-Type, only its body
+            if self.cache_config['CACHE_CONTENT_TYPE_JSON_ONLY']:
+                resp.body = self.deserialize(data)
+            else:
+                resp.content_type, resp.body = self.deserialize(data)
             resp.status = HTTP_200
             req.context.cached = True
 
@@ -99,7 +101,7 @@ class Middleware:
         if hasattr(req.context, 'cache') and req.context.cache \
                 and (not hasattr(req.context, 'cached') or not req.context.cached):
             key = self.generate_cache_key(req)
-            value = resp.body
+            value = self.serialize(req, resp, resource)
 
             # for the REST-based strategy there is no timeout, the cached record never expires
             if self.cache_config['CACHE_EVICTION_STRATEGY'] in [CacheEvictionStrategy.rest_based]:
@@ -124,3 +126,30 @@ class Middleware:
             method = req.method
 
         return f'{path}:{method.upper()}'
+
+    def serialize(self, req, resp, resource) -> bytes:
+        """ Serializes the response, so it can be cached.
+
+        If CACHE_CONTENT_TYPE_JSON_ONLY = False (default), then we need to
+        keep the response Content-Type header, so we need to serialize the response
+        body with the content type with msgpack, which takes away performance.
+
+        For this reason the user can set CACHE_CONTENT_TYPE_JSON_ONLY = True, in
+        which case the response Content-Type is NOT cached, so it will be
+        the default - which is application/json. That should be fine for most
+        REST APIs and should bring a nice performance bump by avoiding the msgpack
+        serialization.
+        """
+        if self.cache_config['CACHE_CONTENT_TYPE_JSON_ONLY']:
+            return resp.body
+        else:
+            return msgpack.packb([resp.content_type, resp.body], use_bin_type=True)
+
+    def deserialize(self, data: bytes) -> Tuple[str, Any]:
+        """ Deserializes the cached record into the response Body
+        or the Content-Type and Body
+        """
+        if self.cache_config['CACHE_CONTENT_TYPE_JSON_ONLY']:
+            return data
+        else:
+            return msgpack.unpackb(data, raw=False)

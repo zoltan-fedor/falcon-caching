@@ -4,8 +4,9 @@ Changelog
 Version 0.2.0
 -------------
 
-- The `request_body` is no longer included in the cache key, `see <https://github.com/zoltan-fedor/falcon-caching/issues/3>`_
+- The ``Content-Type`` header is cached now, except when this is turned off by the ``CACHE_CONTENT_TYPE_JSON_ONLY`` setting, `see <https://github.com/zoltan-fedor/falcon-caching/issues/2>`_ and in the `docs <https://falcon-caching.readthedocs.io/en/latest/index.html#what-gets-cached>`_
 - Added a safer method to identify the `on_` methods to decorate, `see <https://github.com/zoltan-fedor/falcon-caching/issues/4>`_
+- The `request_body` is no longer included in the cache key, `see <https://github.com/zoltan-fedor/falcon-caching/issues/3>`_
 
 Version 0.1.0
 -------------

@@ -39,6 +39,7 @@ class Cache:
         config.setdefault("CACHE_TYPE", "null")
         config.setdefault("CACHE_NO_NULL_WARNING", False)
         config.setdefault("CACHE_EVICTION_STRATEGY", CacheEvictionStrategy.time_based)
+        config.setdefault("CACHE_CONTENT_TYPE_JSON_ONLY", False)
 
         self.config = config
 

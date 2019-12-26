@@ -56,6 +56,36 @@ Cache is managed through a ``Cache`` instance::
 
 .. include:: backends.rst
 
+.. _what_gets_cached:
+
+What gets cached
+----------------
+
+You might ask the question that what (what data) is getting cached when a `responder`
+is cached.
+
+By default two things are cached: the ``response body`` and the response's ``Content-Type`` header.
+
+To be able to store these two things in the cache backend under one object,
+we use `msgpack <https://github.com/msgpack/msgpack-python>`_ to serialize and then deserialize
+when loading the record back from the cache. While `msgpack` is a fast serializer, this does take
+some time.
+
+.. note::
+    If you know that all of your cached responders are using the ```Content-Type`= `application/json```
+    header - which is very typical for basic APIs in these days - then you don't need the
+    ```Content-Type``` header to be cached.
+    This is because the ```Content-Type` = `application/json``` is the default in Falcon and it is added
+    to the response when no other value is specified.
+
+    So in case your application only generates responses with the ```Content-Type` = `application/json``
+    header, then you can turn off this serialization storing the ``Content-Type`` header and
+    benefit from the performance boost of not needing to serialize and deserialize messages.
+
+    You can turn off the serialization by setting **`CACHE_CONTENT_TYPE_JSON_ONLY = True`** in the config -
+    see :ref:`config-attributes`.
+
+
 .. include:: config.rst
 
 .. _resource-level-caching:
