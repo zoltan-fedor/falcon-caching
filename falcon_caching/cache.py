@@ -84,8 +84,8 @@ class Cache:
 
                 def cache_wrap(cls, req, resp, *args, **kwargs):
                     class_or_method(cls, req, resp, *args, **kwargs)
-                    req.context['cache'] = True
-                    req.context['cache_timeout'] = timeout
+                    req.context.cache = True
+                    req.context.cache_timeout = timeout
 
                 return cache_wrap
 

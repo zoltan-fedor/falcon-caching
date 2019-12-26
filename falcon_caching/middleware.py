@@ -63,7 +63,7 @@ class Middleware:
         if data or self.cache.has(key):
             resp.body = data
             resp.status = HTTP_200
-            req.context['cached'] = True
+            req.context.cached = True
 
             # Short-circuit any further processing to skip any remaining
             # 'process_request' and 'process_resource' methods, as well as
@@ -92,8 +92,8 @@ class Middleware:
 
         # Step 2: if it is marked to be cached, but has not yet been cached
         # then we cache it
-        if 'cache' in req.context and req.context['cache'] \
-                and ('cached' not in req.context or not req.context['cached']):
+        if hasattr(req.context, 'cache') and req.context.cache \
+                and (not hasattr(req.context, 'cached') or not req.context.cached):
             key = self.generate_cache_key(req)
             value = resp.body
 
@@ -104,7 +104,7 @@ class Middleware:
             else:
                 # for the time-based and rest-and-time-based eviction strategy the
                 # cached record expires
-                timeout = req.context.get('cache_timeout', 600)
+                timeout = req.context.cache_timeout if hasattr(req.context, 'cache_timeout') else 600
 
             self.cache.set(key, value, timeout=timeout)
 
