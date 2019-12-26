@@ -110,14 +110,7 @@ class Middleware:
 
     @staticmethod
     def generate_cache_key(req, method: str = None) -> str:
-        """ Generate the cache key from the request using the path, method and request body """
-
-        # Get the body of the request to be used in the key.
-        # If Content-Length happens to be 0, or the header is
-        # missing altogether, reading it as below will not block.
-        # see https://falcon.readthedocs.io/en/stable/api/request_and_response.html#falcon.Request.stream
-        request_body = req.stream.read(req.content_length or 0)
-        request_body = request_body.decode() if request_body else ''
+        """ Generate the cache key from the request using the path and the method """
 
         path = req.path
         if path.endswith('/'):
@@ -126,4 +119,4 @@ class Middleware:
         if not method:
             method = req.method
 
-        return f'{path}:{method.upper()}:{request_body}'
+        return f'{path}:{method.upper()}'

@@ -24,14 +24,13 @@ def get_cache_eviction_strategy(app: 'API'):
     return get_cache(app).cache_config['CACHE_EVICTION_STRATEGY']
 
 
-def delete_from_cache(app: 'API', path: str, method: str, request_body: str=None) -> None:
+def delete_from_cache(app: 'API', path: str, method: str) -> None:
     """ Delete / remove a certain key from the cache
     """
-    request_body = request_body if request_body else ''
 
     if path.endswith('/'):
         path = path[:-1]
 
-    key = f'{path}:{method.upper()}:{request_body}'
+    key = f'{path}:{method.upper()}'
 
     get_cache(app).cache.delete(key)

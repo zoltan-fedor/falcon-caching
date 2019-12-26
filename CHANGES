@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 0.2.0
+-------------
+
+- The `request_body` is not longer included in the cache key, `see <https://github.com/zoltan-fedor/falcon-caching/issues/3>`_
+
 
 Version 0.1.0
 -------------
