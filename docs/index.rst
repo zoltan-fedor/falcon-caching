@@ -1,7 +1,7 @@
 Welcome to Falcon-Caching's documentation!
 ==========================================
 
-Version: 0.1.1
+Version: 0.2.0
 
 Falcon-Caching adds cache support to the
 `Falcon web framework <https://github.com/falconry/falcon>`_.
@@ -85,6 +85,7 @@ some time.
     You can turn off the serialization by setting **`CACHE_CONTENT_TYPE_JSON_ONLY = True`** in the config -
     see :ref:`config-attributes`.
 
+.. versionadded:: 0.2
 
 .. include:: config.rst
 
