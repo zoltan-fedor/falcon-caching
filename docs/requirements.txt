@@ -1,0 +1,2 @@
+falcon==2.0.0
+msgpack==0.6.2

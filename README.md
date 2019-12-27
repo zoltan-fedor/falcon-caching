@@ -14,7 +14,7 @@ The library aims to be compatible with CPython 3.6+ and PyPy 3.5+.
 
 ## Documentation
 
-You can find the documentation of this library on [Read the Docs](https://falcon-caching.readthedocs.io/en/latest/).
+You can find the documentation of this library on [Read the Docs](https://falcon-caching.readthedocs.io/).
 
 
 ## Quickstart
