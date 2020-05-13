@@ -248,7 +248,7 @@ def test_caching_content_type_json_only(tmp_path, redis_server, redis_sentinel_s
             pytest.skip("uWSGI could not be imported, are you running under uWSGI?")
             return None
 
-    if 1 == 1:
+    if True:
         cache = Cache(
             config={
                 'CACHE_EVICTION_STRATEGY': eviction_strategy,

@@ -7,6 +7,7 @@ import shutil
 
 from falcon import API, testing
 from falcon_caching import Cache
+from falcon_caching.cache import SUPPORTED_HASH_FUNCTIONS
 
 try:
     __import__("pytest_xprocess")
@@ -254,3 +255,11 @@ def client(app):
     """ Creates a Falcon test client
     """
     return testing.TestClient(app)
+
+
+@pytest.fixture(
+    params=[method for method in SUPPORTED_HASH_FUNCTIONS],
+    ids=[method.__name__ for method in SUPPORTED_HASH_FUNCTIONS],
+)
+def hash_method(request):
+    return request.param

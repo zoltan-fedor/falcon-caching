@@ -14,7 +14,7 @@ help:
 	@echo "make test"
 	@echo "    runs the tests"
 	@echo " "
-	@echo "make travis-test"
+	@echo "make test-travis"
 	@echo "    runs the tests like they would run on Travis (where some tests are skipped)"
 	@echo " "
 	@echo "make tox"

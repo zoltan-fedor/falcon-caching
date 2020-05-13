@@ -50,7 +50,7 @@ The following configuration values exist for Falcon-Caching:
                                  which will turn off serialization and
                                  provide a performance boost. Defaults to
                                  ``False``.
-``CACHE_NO_NULL_WARNING``        Silents the warning message when using
+``CACHE_NO_NULL_WARNING``        Silence the warning message when using
                                  cache type of 'null'.
 ``CACHE_ARGS``                   Optional list to unpack and pass during
                                  the cache class instantiation.

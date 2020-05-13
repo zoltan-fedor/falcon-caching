@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Version 0.3.0
+-------------
+
+- `Cache.memoize()` and `Cache.delete_memoized()` methods were added to allow you to cache the result of other non-resource related functions with their argurments.
+
 Version 0.2.0
 -------------
 

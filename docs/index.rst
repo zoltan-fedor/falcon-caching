@@ -1,7 +1,7 @@
 Welcome to Falcon-Caching's documentation!
 ==========================================
 
-Version: 0.2.0
+Version: 0.3.0
 
 Falcon-Caching adds cache support to the
 `Falcon web framework <https://github.com/falconry/falcon>`_.
@@ -86,6 +86,10 @@ some time.
     see :ref:`config-attributes`.
 
 .. versionadded:: 0.2
+
+
+.. include:: memoization.rst
+
 
 .. include:: config.rst
 

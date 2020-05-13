@@ -1,4 +1,3 @@
-
 from falcon_caching.backends.filesystem import FileSystemCache
 from falcon_caching.backends.memcache import (
     MemcachedCache,
