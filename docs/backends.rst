@@ -97,7 +97,7 @@ object which is API compatible with the official Python Redis
 client (`redis-py`).
 
 If you want to use an object which is API compatible with the official
-Python Redis client (`redis-py`), then just supply that initialized object
+Python Redis client (`redis-py`), then just supply that as an initialized object
 to the `CACHE_REDIS_HOST` parameter.
 
 If you use the same Redis database for other purposes too, then you are strongly
@@ -162,9 +162,9 @@ Example:
 A cache that stores the items in a Memcached instance or cluster.
 It supports the `pylibmc`, `memcache` and the `google app engine memcache` libraries.
 
-You can supply one ore more server addresses via `CACHE_MEMCACHED_SERVERS` or
+You can supply one or more server addresses via `CACHE_MEMCACHED_SERVERS` or
 you can supply an already initialized client, an object that resembles
-the API of a `memcache.Client`. If you have a supplied server(s), then
+the API of a `memcache.Client`. If you have supplied a server(s) address, then
 the library will pick the best memcached client library available to use.
 
 Example:
@@ -208,7 +208,7 @@ Example:
 A cache that stores the items in an SASL-authentication protected Memcached
 instance or cluster.
 
-Just like for `memcached` - you can supply one ore more server addresses
+Just like for `memcached` - you can supply one or more server addresses
 via `CACHE_MEMCACHED_SERVERS` or
 you can supply an already initialized client, an object that resembles
 the API of a `memcache.Client`.

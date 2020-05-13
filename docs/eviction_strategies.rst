@@ -11,7 +11,7 @@ Below is the list of supported strategies:
 'time-based'
 ************
 The most well known *eviction strategy* is simply *time-based*, meaning that the cached record
-gets evicted based on a timeout (also called TTL, time-to-live) being reached. It this case
+gets evicted based on a timeout (also called TTL, time-to-live) being reached. In this case
 the cached data is invalidated x seconds after it was generated.
 In our library this is called **'time-based'** eviction and it is the default *eviction
 strategy*.

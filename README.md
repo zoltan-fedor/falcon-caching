@@ -82,6 +82,7 @@ and hosted on [Read the Docs](https://falcon-caching.readthedocs.io/en/latest/).
 
 To review the documentation locally before committing:
 ```
+$ make docs
 $ cd docs
 $ python -m http.server 8088
 ```
