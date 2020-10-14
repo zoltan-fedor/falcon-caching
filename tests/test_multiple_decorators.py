@@ -21,7 +21,7 @@ def a_decorator(f):
     *EVICTION_STRATEGIES
 ])
 def test_caching_multiple_decorators_on_method(caches, eviction_strategy):
-    """ Testing caching when there are multiple decoractors on the method
+    """ Testing caching when there are multiple decorators on the method
     """
     # get the cache for the given eviction strategy
     cache = caches[eviction_strategy]
