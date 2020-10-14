@@ -24,11 +24,11 @@ sys.path.append(os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'Falcon-Caching'
-copyright = '2019, Zoltan Fedor'
+copyright = '2020, Zoltan Fedor'
 author = 'Zoltan Fedor'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+release = '0.3.1'
 
 
 # -- General configuration ---------------------------------------------------

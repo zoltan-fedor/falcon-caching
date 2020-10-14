@@ -1,11 +1,14 @@
 from falcon import HTTP_200, COMBINED_METHODS
 from falcon_caching.options import CacheEvictionStrategy, HttpMethods
+import logging
 import re
 import msgpack
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 
 if TYPE_CHECKING:
     from falcon_caching.cache import Cache
+
+logger = logging.getLogger(__name__)
 
 _DECORABLE_METHOD_NAME = re.compile(r'^on_({})(_\w+)?$'.format(
     '|'.join(method.lower() for method in COMBINED_METHODS)))
@@ -53,9 +56,21 @@ class Middleware:
             # see the "Cache.cache" decorator in cache.py
             responder_wrapper_name = getattr(getattr(resource, responder), '__name__')
 
-            if responder_wrapper_name != 'cache_wrap':
-                # no caching was requested on this responder
-                return
+            # is the given method (or its class) decorated by the cache_wrap being the topmost decorator?
+            if responder_wrapper_name == 'cache_wrap':
+                logger.debug(" This endpoint is decorated by 'cache' being the topmost decorator.")
+            else:
+                # 'cache_wrap' is not the topmost decorator - let's check whether 'cache' is
+                # any of the other decorator on this method (not the topmost):
+                # this requires the use of @register(decor1, decor2) as the decorator
+                if hasattr(getattr(resource, responder), '_decorators') and \
+                        'cache' in [d._decorator_name for d in getattr(resource, responder)._decorators
+                                    if hasattr(d, '_decorator_name')]:
+                    logger.debug(" This endpoint is decorated by 'cache', but it is NOT the topmost decorator.")
+                else:
+                    # no cache was requested on this responder as no decorator at all
+                    logger.debug(" No 'cache' was requested for this endpoint.")
+                    return
 
         # Step 3: look up the record in the cache
         key = self.generate_cache_key(req)

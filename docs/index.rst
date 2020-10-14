@@ -1,7 +1,7 @@
 Welcome to Falcon-Caching's documentation!
 ==========================================
 
-Version: 0.3.0
+Version: 0.3.1
 
 Falcon-Caching adds cache support to the
 `Falcon web framework <https://github.com/falconry/falcon>`_.
@@ -196,6 +196,10 @@ Query String
 Currently the `query string <https://falcon.readthedocs.io/en/stable/api/request_and_response.html#falcon.Request.query_string>`_
 is NOT used in the cache key, so two requests which only differ in the query string will be cached
 against the same key.
+
+
+.. include:: recipes.rst
+
 
 Development
 -----------
