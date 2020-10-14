@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-Version 0.3.2
+Version 0.3.3
 -------------
 
 - Fixing the issue with multiple decorators when `@cache.cached()` is not the topmost one
