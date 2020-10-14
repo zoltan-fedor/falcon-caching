@@ -6,6 +6,7 @@ Version 0.3.2
 -------------
 
 - Fixing the issue with multiple decorators when `@cache.cached()` is not the topmost one
+- Fixing document readability issues in Sphinx
 
 Version 0.3.1
 -------------
