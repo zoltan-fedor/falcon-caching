@@ -1,4 +1,4 @@
-from falcon import HTTP_200, COMBINED_METHODS
+from falcon import HTTP_200, COMBINED_METHODS, __version__ as FALCONVERSION
 from falcon_caching.options import CacheEvictionStrategy, HttpMethods
 import logging
 import re
@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 
 _DECORABLE_METHOD_NAME = re.compile(r'^on_({})(_\w+)?$'.format(
     '|'.join(method.lower() for method in COMBINED_METHODS)))
+
+# what is the Falcon main version (eg 2 or 3, etc)
+FALCONVERSION_MAIN = int(FALCONVERSION.split('.')[0])
 
 
 class Middleware:
@@ -80,9 +83,15 @@ class Middleware:
             # if the CACHE_CONTENT_TYPE_JSON_ONLY = True, then we are NOT
             # caching the response's Content-Type, only its body
             if self.cache_config['CACHE_CONTENT_TYPE_JSON_ONLY']:
-                resp.body = self.deserialize(data)
+                if FALCONVERSION_MAIN < 3:
+                    resp.body = self.deserialize(data)
+                else:
+                    resp.text = self.deserialize(data)
             else:
-                resp.content_type, resp.body = self.deserialize(data)
+                if FALCONVERSION_MAIN < 3:
+                    resp.content_type, resp.body = self.deserialize(data)
+                else:
+                    resp.content_type, resp.text = self.deserialize(data)
             resp.status = HTTP_200
             req.context.cached = True
 
@@ -156,9 +165,15 @@ class Middleware:
         serialization.
         """
         if self.cache_config['CACHE_CONTENT_TYPE_JSON_ONLY']:
-            return resp.body
+            if FALCONVERSION_MAIN < 3:
+                return resp.body
+            else:
+                return resp.text
         else:
-            return msgpack.packb([resp.content_type, resp.body], use_bin_type=True)
+            if FALCONVERSION_MAIN < 3:
+                return msgpack.packb([resp.content_type, resp.body], use_bin_type=True)
+            else:
+                return msgpack.packb([resp.content_type, resp.text], use_bin_type=True)
 
     def deserialize(self, data: bytes) -> Tuple[str, Any]:
         """ Deserializes the cached record into the response Body

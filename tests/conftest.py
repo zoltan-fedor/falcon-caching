@@ -5,7 +5,7 @@ import pytest
 import random
 import shutil
 
-from falcon import API, testing
+from falcon import API, testing, __version__ as FALCONVERSION
 from falcon_caching import Cache
 from falcon_caching.cache import SUPPORTED_HASH_FUNCTIONS
 
@@ -17,6 +17,9 @@ except ImportError:
     @pytest.fixture(scope="session")
     def xprocess():
         pytest.skip("pytest-xprocess not installed.")
+
+# what is the Falcon main version (eg 2 or 3, etc)
+FALCONVERSION_MAIN = int(FALCONVERSION.split('.')[0])
 
 # the different cache_types that will be tested
 CACHE_TYPES = [
@@ -204,7 +207,10 @@ def app(request, caches):
         """ A cached resource with long expiration and all the different methods """
         @cache.cached(timeout=60)
         def on_get(self, req, resp):
-            resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            if FALCONVERSION_MAIN < 3:
+                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            else:
+                resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
         @cache.cached(timeout=60)
         def on_post(self, req, resp):
@@ -226,7 +232,10 @@ def app(request, caches):
         """ A cached resource with short expiration """
         @cache.cached(timeout=CACHE_EXPIRES)
         def on_get(self, req, resp):
-            resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            if FALCONVERSION_MAIN < 3:
+                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            else:
+                resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
         @cache.cached(timeout=CACHE_EXPIRES)
         def on_post(self, req, resp):
@@ -236,7 +245,10 @@ def app(request, caches):
     class ClassCachedResourceExpires:
         """ A cached resource which cached on the class level """
         def on_get(self, req, resp):
-            resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            if FALCONVERSION_MAIN < 3:
+                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            else:
+                resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
         def on_post(self, req, resp):
             pass

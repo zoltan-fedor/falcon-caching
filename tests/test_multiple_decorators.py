@@ -6,7 +6,7 @@ import pytest
 import random
 from time import sleep
 
-from tests.conftest import EVICTION_STRATEGIES
+from tests.conftest import EVICTION_STRATEGIES, FALCONVERSION_MAIN
 
 
 def a_decorator(f):
@@ -31,20 +31,29 @@ def test_caching_multiple_decorators_on_method(caches, eviction_strategy):
         @cache.cached(timeout=1)
         @a_decorator
         def on_get(self, req, resp):
-            resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            if FALCONVERSION_MAIN < 3:
+                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            else:
+                resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
     class CachedResource2:
         # a resource where the cache is NOT the first decorator
         @a_decorator
         @cache.cached(timeout=1)
         def on_get(self, req, resp):
-            resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            if FALCONVERSION_MAIN < 3:
+                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            else:
+                resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
     class CachedResource3:
         # a resource where the cache is NOT the first decorator, but the register() is used
         @register(a_decorator, cache.cached(timeout=1))
         def on_get(self, req, resp):
-            resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            if FALCONVERSION_MAIN < 3:
+                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            else:
+                resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
     app = API(middleware=cache.middleware)
     app.add_route('/randrange_cached', CachedResource())

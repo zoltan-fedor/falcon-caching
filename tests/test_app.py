@@ -18,7 +18,7 @@ from falcon_caching.backends.redis import Redis, RedisSentinel
 from falcon_caching.backends.filesystem import FileSystemCache
 from falcon_caching.backends.simple import SimpleCache
 from tests.conftest import CACHE_EXPIRES, CACHE_BUSTING_METHODS, CACHE_TYPES,\
-    EVICTION_STRATEGIES, REDIS_PORT, CACHE_THRESHOLD
+    EVICTION_STRATEGIES, REDIS_PORT, CACHE_THRESHOLD, FALCONVERSION_MAIN
 from tests.utils import get_cache, get_cache_class, get_cache_eviction_strategy,\
     delete_from_cache
 
@@ -204,7 +204,10 @@ def test_caching_content_type(caches, eviction_strategy):
         @cache.cached(timeout=1)
         def on_get(self, req, resp):
             resp.content_type = 'mycustom/verycustom'
-            resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            if FALCONVERSION_MAIN < 3:
+                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+            else:
+                resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
     app = API(middleware=cache.middleware)
     app.add_route('/randrange_cached', CachedResource())
@@ -265,7 +268,10 @@ def test_caching_content_type_json_only(tmp_path, redis_server, redis_sentinel_s
             @cache.cached(timeout=1)
             def on_get(self, req, resp):
                 resp.content_type = 'mycustom/verycustom'
-                resp.body = json.dumps({'num': random.randrange(0, 100000)})
+                if FALCONVERSION_MAIN < 3:
+                    resp.body = json.dumps({'num': random.randrange(0, 100000)})
+                else:
+                    resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
         app = API(middleware=cache.middleware)
         app.add_route('/randrange_cached', CachedResource())

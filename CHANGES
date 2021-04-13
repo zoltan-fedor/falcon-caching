@@ -2,6 +2,11 @@ Changelog
 =========
 
 
+Version 0.3.4
+-------------
+
+- Falcon 3.0.0 has renamed the `Response.body` to `Response.text`
+
 Version 0.3.3
 -------------
 
