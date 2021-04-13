@@ -17,7 +17,8 @@ Quickstart
             pass
 
     # create the app with the cache middleware
-    app = falcon.API(middleware=cache.middleware)
+    # you can use falcon.API() instead of falcon.App() below Falcon 3.0.0
+    app = falcon.App(middleware=cache.middleware)
 
     things = ThingsResource()
 
