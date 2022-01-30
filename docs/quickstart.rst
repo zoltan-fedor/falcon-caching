@@ -1,6 +1,9 @@
 Quickstart
 ----------
 
+
+WSGI (alias sync) example:
+
 .. code-block:: python
 
     import falcon
@@ -19,6 +22,31 @@ Quickstart
     # create the app with the cache middleware
     # you can use falcon.API() instead of falcon.App() below Falcon 3.0.0
     app = falcon.App(middleware=cache.middleware)
+
+    things = ThingsResource()
+
+    app.add_route('/things', things)
+..
+
+
+ASGI (alias async) example:
+
+.. code-block:: python
+
+    import falcon.asig
+    from falcon_caching import AsyncCache
+
+    # setup the cache instance
+    cache = AsyncCache(config={'CACHE_TYPE': 'simple'})
+
+    class ThingsResource:
+
+        # mark the method as cached
+        @cache.cached(timeout=600)
+        async def on_get(self, req, resp):
+            pass
+
+    app = falcon.asgi.App(middleware=cache.middleware)
 
     things = ThingsResource()
 

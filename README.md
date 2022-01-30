@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/zoltan-fedor/falcon-caching.svg?branch=master)](https://travis-ci.com/zoltan-fedor/falcon-caching)
+[![example workflow](https://github.com/zoltan-fedor/falcon-caching/actions/workflows/test.yaml/badge.svg)](https://github.com/zoltan-fedor/falcon-caching/actions?query=workflow%3A%22Run+tests%22)
 [![codecov](https://codecov.io/gh/zoltan-fedor/falcon-caching/branch/master/graph/badge.svg)](https://codecov.io/gh/zoltan-fedor/falcon-caching)
 [![Documentation Status](https://readthedocs.org/projects/falcon-caching/badge/?version=latest)](https://falcon-caching.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/zoltan-fedor/falcon-caching)
@@ -11,6 +11,9 @@ It is a port of the popular [Flask-Caching](https://github.com/sh4nks/flask-cach
 
 The library aims to be compatible with CPython 3.6+ and PyPy 3.5+.
 
+You can use this library both with a sync (WSGI) or an async (ASGI) app,
+by using the matching cache object (`Cache` or `AsyncCache`). 
+
 
 ## Documentation
 
@@ -20,7 +23,7 @@ You can find the documentation of this library on [Read the Docs](https://falcon
 ## Quickstart
 
 
-Quick example:
+Quick example 1  - WSGI, e.g. sync:
 ```
 import falcon
 from falcon_caching import Cache
@@ -48,7 +51,34 @@ things = ThingsResource()
 app.add_route('/things', things)
 ```
 
-Alternatively you could cache the whole resource:
+
+Quick example 2 - ASGI, e.g. async:
+```
+import falcon.asgi
+from falcon_caching import AsyncCache
+
+# setup the cache instance
+cache = AsyncCache(
+    config=
+    {
+        'CACHE_EVICTION_STRATEGY': 'time-based',  # how records are evicted
+        'CACHE_TYPE': 'simple'  # what backend to use to store the cache
+    })
+
+class ThingsResource:
+    # mark the method as cached
+    @cache.cached(timeout=600)
+    async def on_get(self, req, resp):
+        pass
+
+app = falcon.asgi.App(middleware=cache.middleware)
+
+things = ThingsResource()
+
+app.add_route('/things', things)
+```
+
+Alternatively you could cache the whole resource (sync or async):
 ```
 # mark the whole resource - all its 'on_' methods as cached
 @cache.cached(timeout=600)

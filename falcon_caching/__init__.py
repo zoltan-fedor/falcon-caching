@@ -4,3 +4,4 @@
 __version__ = "0.3.4"
 
 from falcon_caching.cache import Cache
+from falcon_caching.async_cache import AsyncCache

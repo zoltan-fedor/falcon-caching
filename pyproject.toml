@@ -41,9 +41,13 @@ Documentation = "https://falcon-caching.readthedocs.io/en/latest/"
 
 [tool.flit.metadata.requires-extra]
 test = [
+    "aiofiles",
+    "coredis",
+    "emcache",
     "flit",
     "pylibmc",
     "pytest >=4.0.0",
+    "pytest-asyncio",
     "pytest-cov",
     "pytest-pep8",
     "pytest-xdist",

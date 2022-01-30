@@ -2,7 +2,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from falcon import API
-    from falcon_caching.cache import Cache
+    from falcon.asgi import App
+    from falcon_caching.cache import AsyncCache, Cache
 
 
 def get_cache(app: 'API') -> 'Cache':
@@ -34,3 +35,20 @@ def delete_from_cache(app: 'API', path: str, method: str) -> None:
     key = f'{path}:{method.upper()}'
 
     get_cache(app).cache.delete(key)
+
+
+def async_get_cache(app: 'App') -> 'AsyncCache':
+    """ Get the cache object from the app """
+    return app._middleware[1][0].__self__
+
+
+async def async_delete_from_cache(app: 'App', path: str, method: str) -> None:
+    """ Delete / remove a certain key from the cache
+    """
+
+    if path.endswith('/'):
+        path = path[:-1]
+
+    key = f'{path}:{method.upper()}'
+
+    await async_get_cache(app).cache.delete(key)
