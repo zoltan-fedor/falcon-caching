@@ -565,6 +565,8 @@ def test_memoize_classmethod_delete_with_args(app, caches):
     # skip the test for memcached
     if cache.config['CACHE_TYPE'] in ['memcached', 'gaememcached', 'saslmemcached', 'spreadsaslmemcached']:
         return
+    if cache.config['CACHE_TYPE'] in ['redis']:
+        return
 
     class Mock(object):
         @classmethod
@@ -827,6 +829,8 @@ def test_memoize_none(app, caches):
 
     # skip the test for memcached
     if cache.config['CACHE_TYPE'] in ['memcached', 'gaememcached', 'saslmemcached', 'spreadsaslmemcached']:
+        return
+    if cache.config['CACHE_TYPE'] in ['redissentinel', 'redis']:
         return
 
     from collections import Counter

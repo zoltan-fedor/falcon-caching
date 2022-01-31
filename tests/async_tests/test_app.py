@@ -217,17 +217,21 @@ def test_caching_content_type(async_caches, eviction_strategy):
                 resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
     app = falcon.asgi.App(middleware=cache.middleware)
-    app.add_route('/randrange_cached', CachedResource())
+    app.add_route('/randrange_cached5', CachedResource())
 
     client = testing.TestClient(app)
 
+    # before making the first call let's ensure that the cache is empty
+    asyncio.get_event_loop().run_until_complete(
+        cache.cache.delete("/randrange_cached5:GET"))
+
     # the first call will cache it
-    result1 = client.simulate_get('/randrange_cached')
+    result1 = client.simulate_get('/randrange_cached5')
     assert result1.headers['Content-Type'] == 'mycustom/verycustom'
 
     # the second call returns it from cache - but it still carries
     # the same content-type
-    result2 = client.simulate_get('/randrange_cached')
+    result2 = client.simulate_get('/randrange_cached5')
     assert result1.json['num'] == result2.json['num']
     assert result2.headers['Content-Type'] == 'mycustom/verycustom'
 
@@ -273,24 +277,20 @@ def test_caching_content_type_json_only(tmp_path, redis_server, redis_sentinel_s
                     resp.text = json.dumps({'num': random.randrange(0, 100000)})
 
         app = falcon.asgi.App(middleware=cache.middleware)
-        app.add_route('/randrange_cached', CachedResource())
+        app.add_route('/randrange_cached3', CachedResource())
 
         client = testing.TestClient(app)
 
         # before making the first call let's ensure that the cache is empty
-        if async_cache_type == 'memcached':
-            asyncio.get_event_loop().run_until_complete(
-                cache.cache.delete("/randrange_cached:GET"))
-        else:
-            asyncio.get_event_loop().run_until_complete(
-                cache.clear())
+        asyncio.get_event_loop().run_until_complete(
+            cache.cache.delete("/randrange_cached3:GET"))
 
         # the first call will cache it
-        result1 = client.simulate_get('/randrange_cached')
+        result1 = client.simulate_get('/randrange_cached3')
         assert result1.headers['Content-Type'] == 'mycustom/verycustom'
 
         # the second call returns it from cache - but as the content-type
         # is NOT cached, it will return the default 'application/json' type
-        result2 = client.simulate_get('/randrange_cached')
+        result2 = client.simulate_get('/randrange_cached3')
         assert result1.json['num'] == result2.json['num']
         assert result2.headers['Content-Type'] == 'application/json'

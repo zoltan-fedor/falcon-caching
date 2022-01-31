@@ -1,3 +1,4 @@
+import asyncio
 import sys
 import random
 import time
@@ -351,7 +352,7 @@ async def test_memoize_kwargonly(async_app, async_caches):
     assert await big_foo() == result_a
     assert await big_foo() < 1
     assert await big_foo(5) == result_b
-    assert await big_foo(5) >= 5 and big_foo(5) < 6
+    assert await big_foo(5) >= 5 and await big_foo(5) < 6
 
 
 @pytest.mark.asyncio
@@ -592,6 +593,8 @@ async def test_memoize_classmethod_delete_with_args(async_app, async_caches):
         @cache.memoize(5)
         async def big_foo(cls, a, b):
             return a + b + random.randrange(0, 100000)
+
+    await cache.delete_memoized(Mock.big_foo)
 
     result = await Mock.big_foo(5, 2)
     result2 = await Mock.big_foo(5, 3)
@@ -868,6 +871,8 @@ async def test_memoize_none(async_app, async_caches):
 
         return None
 
+    await cache.delete_memoized(memoize_none)
+
     await memoize_none(1)
 
     # The memoized function should have been called
@@ -879,7 +884,8 @@ async def test_memoize_none(async_app, async_caches):
     # …thus, the call counter should remain 1
     assert call_counter[1] == 1
 
-    await cache.clear()
+    # await cache.clear()
+    await cache.delete_memoized(memoize_none)
 
     await memoize_none(1)
     assert call_counter[1] == 2

@@ -54,6 +54,7 @@ jobs:
           pipenv install --dev
           # importlib-metadata is needed for Python 3.6 and 3.7
           pipenv install --dev importlib-metadata
+          ulimit -n 4096
 
       - name: Test with pytest
         run: |
