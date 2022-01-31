@@ -1,7 +1,6 @@
-.. _eviction-strategies:
 
 Eviction strategies
--------------------
+---------------------
 
 Once a resource is cached, there is the question of how that cached record will be evicted
 from the cache - alias what *'eviction strategy'* is followed.
@@ -37,7 +36,7 @@ request arrives.
 We call this **'rest-and-time-based'** eviction strategy.
 
 These eviction strategies can be set with the **CACHE_EVICTION_STRATEGY** config attribute -
-see :ref:`config-attributes`.
+see `Configuring Falcon-Caching`_.
 
 .. code-block:: python
 

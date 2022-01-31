@@ -24,6 +24,10 @@ help:
 	@echo "    makes tox to recreate all its virtual environments before running the tests."
 	@echo "    This is required everytime when package dependencies change!"
 	@echo " "
+	@echo "make run-act"
+	@echo "    runs act - to run the GitHub Actions locally (all tests on all OS using docker),"
+	@echo "    It will fail the codecov upload - the last step of the workflow, but that is okey."
+	@echo " "
 	@echo "make docs"
 	@echo "    builds the html docs which becomes available under docs/_build/html"
 	@echo " "
@@ -46,7 +50,7 @@ lint:
 	mypy falcon_caching --ignore-missing-imports
 
 test:
-	pytest -x --cov-report term-missing
+	ulimit -n 4096 && pytest --cov-report term-missing --reruns 5 --reruns-delay 1
 
 test-travis:
 	TRAVIS='yes' pytest -x --cov-report term-missing
@@ -56,6 +60,9 @@ tox:
 
 tox-recreate:
 	tox --recreate
+
+run-act:
+	act
 
 docs:
 	cd docs && \

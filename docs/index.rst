@@ -11,6 +11,15 @@ It is a port of the popular
 
 The library aims to be compatible with CPython 3.6+ and PyPy 3.5+.
 
+You can use this library both with a sync (WSGI) or an async (ASGI) app,
+by using the matching cache object (``Cache`` or ``AsyncCache``).
+Throughout the documentation we will be mostly be showcasing examples
+for the ``Cache`` object, but all those example could be used with the
+``AsyncCache`` object too. The Quickstart example shows both ``Cache``
+and ``AsyncCache`` side-by-side.
+Obviously you should never be mixing the two in a single app, use
+one or the other.
+
 .. include:: quickstart.rst
 
 
@@ -25,13 +34,14 @@ Install the extension with pip::
 Set Up
 ------
 
-Cache is managed through a ``Cache`` instance::
+Cache is managed through a ``Cache`` and the ``AsyncCache`` instance::
 
     import falcon
-    from falcon_caching import Cache
+    # import falcon.asgi
+    from falcon_caching import Cache, AsyncCache
 
     # setup the cache instance
-    cache = Cache(
+    cache = Cache(  # could also be 'AsyncCache'
         config=
         {
             'CACHE_EVICTION_STRATEGY': 'time-based',  # how records are
@@ -42,12 +52,14 @@ Cache is managed through a ``Cache`` instance::
     class ThingsResource:
         # mark the method as cached for 600 seconds
         @cache.cached(timeout=600)
-        def on_get(self, req, resp):
-            pass
+        def on_get(self, req, resp):   # this could also be an async function
+            pass                       # if AsyncCache() is used
 
     # create the app with the cache middleware
     # you can use falcon.API() instead of falcon.App() below Falcon 3.0.0
     app = falcon.App(middleware=cache.middleware)
+    # app = falcon.asgi.App(middleware=cache.middleware)
+
 
     things = ThingsResource()
 
@@ -84,7 +96,7 @@ some time.
     benefit from the performance boost of not needing to serialize and deserialize messages.
 
     You can turn off the serialization by setting **`CACHE_CONTENT_TYPE_JSON_ONLY = True`** in the config -
-    see :ref:`config-attributes`.
+    see `Configuring Falcon-Caching`_.
 
 .. versionadded:: 0.2
 

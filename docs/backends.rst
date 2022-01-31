@@ -9,7 +9,7 @@ The Falcon-Caching library offers you different backend options and made to
 be extendable, so additional backend options can be added.
 
 The type of backend used is determined by the **CACHE_TYPE** attribute  -
-see :ref:`config-attributes`.
+see `Configuring Falcon-Caching`_.
 
 Below is an example of using `CACHE_TYPE` with value `'simple'` - which makes
 the cached records stored in the local process' memory (not 100% thread safe!):
@@ -78,7 +78,7 @@ Example:
 
     cache = Cache(
         config={
-            'CACHE_TYPE': 'filesystem'
+            'CACHE_TYPE': 'filesystem',
             'CACHE_EVICTION_STRATEGY': 'time-based',
             'CACHE_DIR': '/tmp/falcon-cache-dedicated/',
             'CACHE_THRESHOLD': 500  # the maximum number of items the
@@ -112,7 +112,7 @@ Example:
 
     cache = Cache(
         config={
-            'CACHE_TYPE': 'redis'
+            'CACHE_TYPE': 'redis',
             'CACHE_EVICTION_STRATEGY': 'time-based',
             'CACHE_REDIS_HOST': 'localhost',  # Redis host/client object
                                               # default: 'localhost'
@@ -147,7 +147,7 @@ Example:
             'CACHE_TYPE': 'redissentinel'
             'CACHE_EVICTION_STRATEGY': 'time-based',
             'CACHE_REDIS_SENTINELS': [("127.0.0.1", 26379),
-                                     ("10.0.0.1", 26379)]
+                                     ("10.0.0.1", 26379)],
             'CACHE_REDIS_SENTINEL_MASTER': 'mymaster',  # default: None
             'CACHE_REDIS_PASSWORD': 'MyRedisPassword',  # default: None
             'CACHE_REDIS_SENTINEL_PASSWORD': 'MyPsw',   # default: None
@@ -175,7 +175,7 @@ Example:
 
     cache = Cache(
         config={
-            'CACHE_TYPE': 'memcached'
+            'CACHE_TYPE': 'memcached',
             'CACHE_EVICTION_STRATEGY': 'time-based',
             'CACHE_MEMCACHED_SERVERS': ["127.0.0.1:11211",
                                         "127.0.0.1:11212"]
@@ -190,7 +190,7 @@ Example:
 
     cache = Cache(
         config={
-            'CACHE_TYPE': 'memcached'
+            'CACHE_TYPE': 'memcached',
             'CACHE_EVICTION_STRATEGY': 'time-based',
             'CACHE_MEMCACHED_SERVERS': ["127.0.0.1:11211",
                                         "127.0.0.1:11212"]
@@ -221,7 +221,7 @@ Example:
 
     cache = Cache(
         config={
-            'CACHE_TYPE': 'saslmemcached'
+            'CACHE_TYPE': 'saslmemcached',
             'CACHE_EVICTION_STRATEGY': 'time-based',
             'CACHE_MEMCACHED_SERVERS': ["127.0.0.1:11211",
                                         "127.0.0.1:11212"]
@@ -263,7 +263,7 @@ Example:
 
     cache = Cache(
         config={
-            'CACHE_TYPE': 'uwsgi'
+            'CACHE_TYPE': 'uwsgi',
             'CACHE_UWSGI_NAME': 'mycache@localhost:3031',  # default: ''
             'CACHE_KEY_PREFIX': 'cache'  # default: None
         })

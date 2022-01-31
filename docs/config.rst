@@ -1,7 +1,6 @@
-.. _config-attributes:
 
 Configuring Falcon-Caching
---------------------------
+---------------------------
 
 The following configuration values exist for Falcon-Caching:
 
@@ -18,7 +17,7 @@ The following configuration values exist for Falcon-Caching:
                                  * **rest-based**: records are removed once a PUT/POST/PATCH/DELETE call is made against the resource
                                  * **rest-and-time-based**: records are removed either by time or request method (whichever happens first)
 
-                                 See more at :ref:`eviction-strategies`
+                                 See more at `Eviction strategies`_
 
 ``CACHE_TYPE``                   Specifies which type of caching object to
                                  use. This is an import string that will

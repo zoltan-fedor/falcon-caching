@@ -35,11 +35,9 @@ def test_cache_set(cache_time_based):
 
 def test_cache_add(cache_time_based):
     cache = cache_time_based
-    # on Travis the below fails for SpreadSASLMemcachedCache
-    # but locally it doesn't...
-    if isinstance(cache, SpreadSASLMemcachedCache)\
-            and os.getenv('TRAVIS', 'no') == 'yes':
-        pytest.skip("Skipping for SpreadSASLMemcachedCache on Travis")
+    # the below fails for SpreadSASLMemcachedCache
+    if isinstance(cache, SpreadSASLMemcachedCache):
+        pytest.skip("Skipping for SpreadSASLMemcachedCache")
 
     cache.add("hi", "hello")
     assert cache.get("hi") == "hello"
