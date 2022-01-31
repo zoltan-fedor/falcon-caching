@@ -162,6 +162,8 @@ def test_memoize_delete(app, caches):
     assert big_foo(5, 3) == result2
 
     cache.delete_memoized(big_foo)
+    cache.delete_memoized(big_foo, 5, 3)
+    cache.delete_memoized(big_foo, 5, 2)
 
     assert big_foo(5, 2) != result
     assert big_foo(5, 3) != result2
