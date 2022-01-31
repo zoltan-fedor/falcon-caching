@@ -60,7 +60,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pipenv run pytest --cov-report xml:coverage.xml --cov-report term-missing
+          pipenv run pytest --cov-report xml:coverage.xml --cov-report term-missing --reruns 5 --reruns-delay 1
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2

@@ -29,6 +29,9 @@ def test_app_basic(async_client):
     # delete any existing cache records for this endpoint to ensure
     # that we start from scratch
     delete_from_cache(app=async_client.app, path='/randrange_cached', method="GET")
+    asyncio.get_event_loop().run_until_complete(
+        async_client.app._middleware[1][0].__self__.cache.delete(f"/randrange_cached:GET"))
+
     result1 = async_client.simulate_get('/randrange_cached')
     assert 100000 >= result1.json['num'] >= 0
 
@@ -39,6 +42,8 @@ def test_onget_cache(async_client):
     # delete any existing cache records for this endpoint to ensure
     # that we start from scratch
     delete_from_cache(app=async_client.app, path='/randrange_cached', method="GET")
+    asyncio.get_event_loop().run_until_complete(
+        async_client.app._middleware[1][0].__self__.cache.delete(f"/randrange_cached:GET"))
 
     result1 = async_client.simulate_get('/randrange_cached')
     # if get_cache_class(client.app) in [SimpleCache, FileSystemCache]:
@@ -71,6 +76,8 @@ def test_cache_expires(async_client, decorator_type):
     # this is an async function, so we need to run it from the event loop
     asyncio.get_event_loop().run_until_complete(
         async_delete_from_cache(app=async_client.app, path=path, method="GET"))
+    asyncio.get_event_loop().run_until_complete(
+        async_client.app._middleware[1][0].__self__.cache.delete(f"{path}:GET"))
 
     result1 = async_client.simulate_get(path)
     result2 = async_client.simulate_get(path)
@@ -105,9 +112,13 @@ def test_rest_action_expires_cache(async_client):
     # that we start from scratch
     asyncio.get_event_loop().run_until_complete(
         async_delete_from_cache(app=async_client.app, path="/randrange_cached", method="GET"))
+    asyncio.get_event_loop().run_until_complete(
+        async_client.app._middleware[1][0].__self__.cache.delete(f"/randrange_cached:GET"))
     for method in CACHE_BUSTING_METHODS:
         asyncio.get_event_loop().run_until_complete(
             async_delete_from_cache(app=async_client.app, path="/randrange_cached", method=method))
+        asyncio.get_event_loop().run_until_complete(
+            async_client.app._middleware[1][0].__self__.cache.delete(f"/randrange_cached:{method}"))
 
     # normal get should chache for all eviction strategies
     result1 = async_client.simulate_get('/randrange_cached')
@@ -224,6 +235,8 @@ def test_caching_content_type(async_caches, eviction_strategy):
     # before making the first call let's ensure that the cache is empty
     asyncio.get_event_loop().run_until_complete(
         cache.cache.delete("/randrange_cached5:GET"))
+    asyncio.get_event_loop().run_until_complete(
+        cache.cache.delete("/randrange_cached5:GET"))
 
     # the first call will cache it
     result1 = client.simulate_get('/randrange_cached5')
@@ -236,6 +249,7 @@ def test_caching_content_type(async_caches, eviction_strategy):
     assert result2.headers['Content-Type'] == 'mycustom/verycustom'
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize("async_cache_type", [
     *ASYNC_CACHE_TYPES
 ])

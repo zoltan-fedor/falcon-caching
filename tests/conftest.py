@@ -24,7 +24,7 @@ FALCONVERSION_MAIN = int(FALCONVERSION.split('.')[0])
 
 # accepted success rate
 # see https://stackoverflow.com/questions/47726778/pytest-allow-failure-rate?rq=1
-ACCEPTABLE_FAILURE_RATE = 98
+ACCEPTABLE_FAILURE_RATE = 99
 
 # the different cache_types that will be tested
 CACHE_TYPES = [

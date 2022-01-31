@@ -117,7 +117,7 @@ class Middleware:
                                        HttpMethods.DELETE]:
             # get the cache key created by the GET method (assuming there was one)
             key = await self.generate_cache_key(req, method='GET')
-            print(f"Delete key as rest: {key}")
+
             await self.cache.delete(key)
             return
 

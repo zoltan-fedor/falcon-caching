@@ -50,7 +50,7 @@ lint:
 	mypy falcon_caching --ignore-missing-imports
 
 test:
-	ulimit -n 4096 && pytest --cov-report term-missing
+	ulimit -n 4096 && pytest --cov-report term-missing --reruns 5 --reruns-delay 1
 
 test-travis:
 	TRAVIS='yes' pytest -x --cov-report term-missing
