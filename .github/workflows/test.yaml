@@ -44,6 +44,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libmemcached-dev memcached redis-server redis-sentinel python3-dev
+          sudo service redis-sentinel stop
           python -m pip install --upgrade pip
           pip install -U coverage setuptools tox wheel pipenv codecov pytest pytest-cov pytest-xprocess
           python --version
@@ -55,7 +56,6 @@ jobs:
           # importlib-metadata is needed for Python 3.6 and 3.7
           pipenv install --dev importlib-metadata
           ulimit -n 4096
-          service redis-sentinel stop
           cp tests/sentinel_original.conf tests/sentinel.conf
 
       - name: Test with pytest
