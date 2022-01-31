@@ -8,13 +8,6 @@ from falcon_caching.async_backends.null import NullCache
 from falcon_caching.async_backends.redis import Redis, RedisSentinel
 from falcon_caching.async_backends.simple import SimpleCache
 
-try:
-    from falcon_caching.async_backends.uwsgicache import UWSGICache
-
-    has_UWSGICache = True
-except ImportError:
-    has_UWSGICache = False
-
 __all__ = (
     "null",
     "simple",
@@ -107,7 +100,6 @@ def uwsgi(config, args, kwargs):
     raise NotImplementedError(
         "UWSGICache backend is not available in async!"
     )
-
 
 
 def memcached(config, args, kwargs):

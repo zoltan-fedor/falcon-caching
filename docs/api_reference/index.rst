@@ -75,3 +75,52 @@ SpreadSASLMemcachedCache
 
 .. autoclass:: SpreadSASLMemcachedCache
    :members:
+
+
+
+AsyncBackends
+-------------
+
+.. module:: falcon_caching.async_backends
+
+BaseCache
+`````````
+
+.. autoclass:: falcon_caching.async_backends.base.BaseCache
+   :members:
+
+NullCache
+`````````
+
+.. autoclass:: NullCache
+   :members:
+
+SimpleCache
+```````````
+
+.. autoclass:: SimpleCache
+   :members:
+
+FileSystemCache
+```````````````
+
+.. autoclass:: FileSystemCache
+   :members:
+
+RedisCache
+``````````
+
+.. autoclass:: Redis
+   :members:
+
+RedisSentinelCache
+``````````````````
+
+.. autoclass:: RedisSentinel
+   :members:
+
+MemcachedCache
+``````````````
+
+.. autoclass:: MemcachedCache
+   :members:
