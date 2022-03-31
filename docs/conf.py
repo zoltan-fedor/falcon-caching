@@ -28,7 +28,7 @@ copyright = '2022, Zoltan Fedor'
 author = 'Zoltan Fedor'
 
 # The full version, including alpha/beta/rc tags
-release = '1.0.1'
+release = '1.0.3'
 
 
 # -- General configuration ---------------------------------------------------
