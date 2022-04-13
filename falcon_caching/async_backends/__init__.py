@@ -49,8 +49,8 @@ def filesystem(config, args, kwargs):
 
 def redis(config, args, kwargs):
     try:
-        from coredis import StrictRedis
-        redis_from_url = StrictRedis.from_url
+        from coredis import Redis
+        redis_from_url = Redis.from_url
     except ImportError:
         raise RuntimeError("no coredis module found")
 
