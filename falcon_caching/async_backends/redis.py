@@ -60,11 +60,7 @@ class Redis(BaseCache):
                 import coredis
             except ImportError:
                 raise RuntimeError("no coredis module found")
-            if kwargs.get("decode_responses", None):
-                raise ValueError(
-                    "decode_responses is not supported by " "Redis."
-                )
-            client = coredis.StrictRedis(
+            client = coredis.Redis(
                 host=host, port=port, password=password, db=db, **kwargs
             )
         else:
@@ -161,36 +157,36 @@ class Redis(BaseCache):
         return await pipe.execute()
 
     async def delete(self, key):
-        return await self._write_client.delete(self._get_prefix() + key)
+        return await self._write_client.delete([self._get_prefix() + key])
 
     async def delete_many(self, *keys):
         if not keys:
             return
         if self.key_prefix:
             keys = [self._get_prefix() + key for key in keys]
-        return await self._write_client.delete(*keys)
+        return await self._write_client.delete(keys)
 
     async def has(self, key):
-        return await self._read_clients.exists(self._get_prefix() + key)
+        return await self._read_clients.exists([self._get_prefix() + key])
 
     async def clear(self):
         status = False
         if self.key_prefix:
             keys = await self._read_clients.keys(self._get_prefix() + "*")
             if keys:
-                status = await self._write_client.delete(*keys)
+                status = await self._write_client.delete(keys)
         else:
-            status = await self._write_client.flushdb(asynchronous=True)
+            status = await self._write_client.flushdb(b"ASYNC")
         return status
 
     async def inc(self, key, delta=1):
-        return await self._write_client.incr(
-            key=self._get_prefix() + key, amount=delta
+        return await self._write_client.incrby(
+            key=self._get_prefix() + key, increment=delta
         )
 
     async def dec(self, key, delta=1):
-        return await self._write_client.decr(
-            key=self._get_prefix() + key, amount=delta
+        return await self._write_client.decrby(
+            key=self._get_prefix() + key, decrement=delta
         )
 
     async def unlink(self, *keys):
@@ -203,8 +199,8 @@ class Redis(BaseCache):
 
         unlink = getattr(self._write_client, "unlink", None)
         if unlink is not None and callable(unlink):
-            return await  self._write_client.unlink(*keys)
-        return await self._write_client.delete(*keys)
+            return await  self._write_client.unlink(keys)
+        return await self._write_client.delete(keys)
 
 
 class RedisSentinel(Redis):
