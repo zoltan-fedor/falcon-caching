@@ -18,10 +18,10 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
@@ -34,7 +34,7 @@ requires = [
     "msgpack"
 ]
 description-file = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.7"
 
 [tool.flit.metadata.urls]
 Documentation = "https://falcon-caching.readthedocs.io/en/latest/"

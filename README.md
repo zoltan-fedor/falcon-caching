@@ -9,7 +9,7 @@ This library provides cache support for the [Falcon web framework](https://githu
 
 It is a port of the popular [Flask-Caching](https://github.com/sh4nks/flask-caching) library.
 
-The library aims to be compatible with CPython 3.6+ and PyPy 3.5+.
+The library aims to be compatible with CPython 3.7+ and PyPy 3.5+.
 
 You can use this library both with a sync (WSGI) or an async (ASGI) app,
 by using the matching cache object (`Cache` or `AsyncCache`). 
@@ -134,7 +134,7 @@ to be able to test against those locally:
 $ sudo apt-get install memcached redis-server redis-sentinel
 ```
 
-You will also need Python 3.6-3.8 and PyPy3 and its source package installed to run
+You will also need Python 3.7-3.10 and PyPy3 and its source package installed to run
 `tox` in all environments.
 
 We do use type hinting and run MyPy on those, but unfortunately MyPy currently breaks

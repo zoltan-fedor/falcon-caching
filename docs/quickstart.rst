@@ -33,7 +33,7 @@ ASGI (alias async) example:
 
 .. code-block:: python
 
-    import falcon.asig
+    import falcon.asgi
     from falcon_caching import AsyncCache
 
     # setup the cache instance

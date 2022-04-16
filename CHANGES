@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+Version 1.1.0
+-------------
+
+- `coredis` Python dependency (used in async) upgrade to version 3.0+ - Thanks @alisaifee!
+- Dropping support for Python 3.6
+
 Version 1.0.1
 -------------
 

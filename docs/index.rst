@@ -9,7 +9,7 @@ Falcon-Caching adds cache support to the
 It is a port of the popular
 `Flask-Caching <https://github.com/sh4nks/flask-caching>`_ library to Falcon.
 
-The library aims to be compatible with CPython 3.6+ and PyPy 3.5+.
+The library aims to be compatible with CPython 3.7+ and PyPy 3.5+.
 
 You can use this library both with a sync (WSGI) or an async (ASGI) app,
 by using the matching cache object (``Cache`` or ``AsyncCache``).
