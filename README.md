@@ -143,6 +143,29 @@ https://github.com/python/typed_ast/issues/97). Also with Pipenv you can't
 have a second Pipfile. This is why for now we don't have `mypy` listed as a dev package
 in the Pipfile.
 
+### Testing
+
+The test suite uses pytest and includes fixtures for testing different cache backends. The `caches` fixture in `tests/conftest.py` is parametrized to test various cache types (e.g., 'simple', 'filesystem', 'redis', 'memcached') and eviction strategies (e.g., 'time-based', 'rest-based', 'rest-and-time-based').
+
+The fixture conditionally depends on server fixtures (e.g., `redis_server`, `memcache_server`) based on the cache type being tested. This ensures that pytest only starts the servers that are actually needed for the test, reducing unnecessary overhead and preventing tests from failing due to missing servers if they don't need them.
+
+For example, if you are testing the 'simple' or 'filesystem' cache types, pytest will not attempt to start Redis or Memcached servers, as they are not required for these cache types.
+
+To run the tests, you can use the following commands:
+
+```
+# Run all tests
+$ pytest
+
+# Run tests for a specific cache type
+$ pytest -k "simple"
+
+# Run tests for a specific eviction strategy
+$ pytest -k "time-based"
+```
+
+For more information on the test fixtures and how they are used, see the `tests/conftest.py` file.
+
 ## Credits
 
 As this is a port of the popular [Flask-Caching](https://github.com/sh4nks/flask-caching) library
