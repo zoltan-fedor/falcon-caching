@@ -231,8 +231,7 @@ def test_caching_content_type(caches, eviction_strategy):
 @pytest.mark.parametrize("eviction_strategy", [
     *EVICTION_STRATEGIES
 ])
-def test_caching_content_type_json_only(tmp_path, redis_server, redis_sentinel_server,
-                                        memcache_server, cache_type, eviction_strategy):
+def test_caching_content_type_json_only(tmp_path, cache_type, eviction_strategy, request):
     """ Testing that the Content-Type header does NOT get cached
     when the CACHE_CONTENT_TYPE_JSON_ONLY = True is set, which means
     that no msgpack serialization is used in this case, which should mean this
@@ -240,11 +239,22 @@ def test_caching_content_type_json_only(tmp_path, redis_server, redis_sentinel_s
     not required because the application/json Content-Type (which is the default
     in Falcon) is sufficient for the app.
     """
-    if cache_type == 'redissentinel' and os.getenv('TRAVIS', 'no') == 'yes':
-        pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+    # Handle cache types that require Redis
+    if cache_type == "redis":
+        request.getfixturevalue("redis_server")
+
+    elif cache_type == 'redissentinel':
+        if os.getenv('TRAVIS', 'no') == 'yes':
+            pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+
+        request.getfixturevalue("redis_sentinel_server")
+
+    # Handle cache types that require Memcached
+    elif cache_type in ("memcached", "gaememcached", "saslmemcached", "spreadsaslmemcached"):
+        request.getfixturevalue("memcache_server")
 
     # uwsgi tests should only run if running under uwsgi
-    if cache_type == 'uwsgi':
+    elif cache_type == 'uwsgi':
         try:
             import uwsgi
         except ImportError:
