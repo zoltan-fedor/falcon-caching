@@ -94,15 +94,26 @@ def pytest_sessionfinish(session, exitstatus):
 
 # parametrized fixture to create caches with different types (eg backends)
 @pytest.fixture(params=CACHE_TYPES)
-def caches(request, tmp_path, redis_server, redis_sentinel_server, memcache_server):
+def caches(request, tmp_path):
     """ Time-based cache parametrized to generate a cache
     for each cache_type (eg backend)
     """
-    if request.param == 'redissentinel' and os.getenv('TRAVIS', 'no') == 'yes':
-        pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+    # Handle cache types that require Redis
+    if request.param == "redis":
+        request.getfixturevalue("redis_server")
+    elif request.param == "redissentinel":
+        # check if we are on travis, if so skip this test
+        if os.getenv("TRAVIS", "no") == "yes":
+            pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+
+        request.getfixturevalue("redis_sentinel_server")
+
+    # Handle cache types that require Memcached
+    elif request.param in ("memcached", "gaememcached", "saslmemcached", "spreadsaslmemcached"):
+        request.getfixturevalue("memcache_server")
 
     # uwsgi tests should only run if running under uwsgi
-    if request.param == 'uwsgi':
+    elif request.param == "uwsgi":
         try:
             import uwsgi
         except ImportError:
@@ -128,12 +139,22 @@ def caches(request, tmp_path, redis_server, redis_sentinel_server, memcache_serv
 
 # parametrized fixture to create caches with different types (eg backends)
 @pytest.fixture(params=ASYNC_CACHE_TYPES)
-def async_caches(request, tmp_path, redis_server, redis_sentinel_server, memcache_server):
-    """ Time-based cache parametrized to generate a cache
+def async_caches(request, tmp_path):
+    """Time-based cache parametrized to generate a cache
     for each cache_type (eg backend)
     """
-    if request.param == 'redissentinel' and os.getenv('TRAVIS', 'no') == 'yes':
-        pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+    # Handle cache types that require Redis
+    if request.param == "redis":
+        request.getfixturevalue("redis_server")
+    elif request.param == "redissentinel":
+        if os.getenv("TRAVIS", "no") == "yes":
+            pytest.skip("Unfortunately on Travis Redis Sentinel currently can't be installed")
+
+        request.getfixturevalue("redis_sentinel_server")
+
+    # Handle cache types that require Memcached
+    elif request.param in ("memcached", "gaememcached"):
+        request.getfixturevalue("memcache_server")
 
     # build a dict of caches for each eviction strategy
     caches = {
