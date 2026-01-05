@@ -11,7 +11,6 @@ from falcon_caching import Cache, AsyncCache
 from falcon_caching.cache import SUPPORTED_HASH_FUNCTIONS
 
 try:
-    __import__("pytest_xprocess")
     from xprocess import ProcessStarter
 except ImportError:
 
