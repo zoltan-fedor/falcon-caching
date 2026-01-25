@@ -298,8 +298,34 @@ def test_caching_content_type_json_only(tmp_path, cache_type, eviction_strategy,
         result1 = client.simulate_get('/randrange_cached')
         assert result1.headers['Content-Type'] == 'mycustom/verycustom'
 
-        # the second call returns it from cache - but as the content-type
+         # the second call returns it from cache - but as the content-type
         # is NOT cached, it will return the default 'application/json' type
         result2 = client.simulate_get('/randrange_cached')
         assert result1.json['num'] == result2.json['num']
         assert result2.headers['Content-Type'] == 'application/json'
+
+
+def test_query_parameter_handling(client):
+    """Test that query parameters are properly included/excluded based on configuration"""
+    # Check the query parameter configuration using the utility function
+    cache = get_cache(client.app)
+    include_query_params = cache.cache_config.get('CACHE_INCLUDE_QUERY_PARAMS', False)
+
+    # Test with query parameters
+    result1 = client.simulate_get('/randrange_cached?sort=asc&filter=active')
+
+    # Test without query parameters
+    result2 = client.simulate_get('/randrange_cached')
+
+    # Test with query parameters in a different order
+    result3 = client.simulate_get('/randrange_cached?filter=active&sort=asc')
+
+    if include_query_params:
+        # Query params should be included and sorted
+        # Different query params should result in different cache entries
+        assert result1.json['num'] != result2.json['num']
+        assert result1.json['num'] == result3.json['num']
+    else:
+        # Query params should be excluded
+        # Same cache key should result in same cached value
+        assert result1.json['num'] == result2.json['num'] == result3.json['num']
