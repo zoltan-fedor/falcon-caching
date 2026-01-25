@@ -12,7 +12,7 @@ It is a port of the popular [Flask-Caching](https://github.com/sh4nks/flask-cach
 The library aims to be compatible with CPython 3.7+ and PyPy 3.5+.
 
 You can use this library both with a sync (WSGI) or an async (ASGI) app,
-by using the matching cache object (`Cache` or `AsyncCache`). 
+by using the matching cache object (`Cache` or `AsyncCache`).
 
 
 ## Documentation
@@ -90,7 +90,7 @@ class ThingsResource:
         pass
 ```
 
-> **NOTE:**  
+> **NOTE:**
 > Be careful with the order of middlewares. The `cache.middleware` will
 short-circuit any further processing if a cached version of that resource is found.
 It will skip any remaining `process_request` and `process_resource` methods,
@@ -107,8 +107,8 @@ For the development environment we use `Pipenv` and for packaging we use `Flit`.
 
 ### Documentation
 
-The documentation is built via Sphinx following the 
-[Google docstring style](https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google) 
+The documentation is built via Sphinx following the
+[Google docstring style](https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google)
 and hosted on [Read the Docs](https://falcon-caching.readthedocs.io/en/latest/).
 
 To review the documentation locally before committing:
@@ -128,7 +128,7 @@ the memcached source to compile, so you will need to install libmemcached-dev fi
 $ sudo apt-get install libmemcached-dev
 ```
 
-You will also need Memcached, Redis and Redis Sentinel to be installed 
+You will also need Memcached, Redis and Redis Sentinel to be installed
 to be able to test against those locally:
 ```
 $ sudo apt-get install memcached redis-server redis-sentinel
@@ -139,7 +139,7 @@ You will also need Python 3.7-3.10 and PyPy3 and its source package installed to
 
 We do use type hinting and run MyPy on those, but unfortunately MyPy currently breaks
 the PyPy tests due to the `typed-ast` package's "bug" (see
-https://github.com/python/typed_ast/issues/97). Also with Pipenv you can't 
+https://github.com/python/typed_ast/issues/97). Also with Pipenv you can't
 have a second Pipfile. This is why for now we don't have `mypy` listed as a dev package
 in the Pipfile.
 
