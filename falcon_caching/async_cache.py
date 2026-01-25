@@ -167,6 +167,7 @@ class AsyncCache:
         config.setdefault("CACHE_EVICTION_STRATEGY", CacheEvictionStrategy.time_based)
         config.setdefault("CACHE_CONTENT_TYPE_JSON_ONLY", False)
         config.setdefault("CACHE_DEBUG", False)
+        config.setdefault("CACHE_INCLUDE_QUERY_PARAMS", False)
 
         self.config = config
 
@@ -193,9 +194,15 @@ class AsyncCache:
         return Middleware(self.cache, self.config)
 
     # @staticmethod
-    def cached(self, timeout: int):
+    def cached(self, timeout: int, include_query_params: bool = None):
         """ This is the decorator used to decorate a resource class or the requested
         method of the resource class
+
+        Args:
+            timeout: Cache timeout in seconds
+            include_query_params: Whether to include query parameters in cache key.
+                                 If None, uses global CACHE_INCLUDE_QUERY_PARAMS setting.
+                                 If True/False, overrides global setting for this endpoint.
         """
         def wrap1(class_or_method, *args):
             # is this about decorating a class or a given method?
@@ -213,6 +220,9 @@ class AsyncCache:
                     await class_or_method(cls, req, resp, *args, **kwargs)
                     req.context.cache = True
                     req.context.cache_timeout = timeout
+                    # Set query parameter caching preference if specified in decorator
+                    if include_query_params is not None:
+                        req.context.cache_include_query_params = include_query_params
 
                 return cache_wrap
 
