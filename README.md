@@ -24,7 +24,7 @@ You can find the documentation of this library on [Read the Docs](https://falcon
 
 
 Quick example 1  - WSGI, e.g. sync:
-```
+```python
 import falcon
 from falcon_caching import Cache
 
@@ -53,7 +53,7 @@ app.add_route('/things', things)
 
 
 Quick example 2 - ASGI, e.g. async:
-```
+```python
 import falcon.asgi
 from falcon_caching import AsyncCache
 
@@ -79,7 +79,7 @@ app.add_route('/things', things)
 ```
 
 Alternatively you could cache the whole resource (sync or async):
-```
+```python
 # mark the whole resource - all its 'on_' methods as cached
 @cache.cached(timeout=600)
 class ThingsResource:
@@ -96,10 +96,45 @@ short-circuit any further processing if a cached version of that resource is fou
 It will skip any remaining `process_request` and `process_resource` methods,
 as well as the `responder` method that the request would have been routed to.
 However, any `process_response` middleware methods will still be called.
->
+
 > This is why it is suggested that you add the `cache.middleware` **following** any
 authentication / authorization middlewares to avoid unauthorized access of records
 served from the cache.
+
+## Query Parameter Caching
+
+The library now supports optional caching by query parameters. This can be configured globally or per-endpoint.
+
+### Global Configuration
+
+```python
+cache = Cache(config={
+    'CACHE_TYPE': 'simple',
+    'CACHE_EVICTION_STRATEGY': 'time-based',
+    'CACHE_INCLUDE_QUERY_PARAMS': True  # Enable query parameter caching globally
+})
+```
+
+### Per-Endpoint Configuration
+
+You can override the global setting for specific endpoints using the decorator:
+
+```python
+# Enable for specific endpoint when disabled globally
+class MyResource:
+    @cache.cached(timeout=60, include_query_params=True)
+    def on_get(self, req, resp):
+        param_value = req.get_param('name')
+        resp.text = f'Hello {param_value}'
+
+# Disable for specific endpoint when enabled globally
+class AnotherResource:
+    @cache.cached(timeout=60, include_query_params=False)
+    def on_get(self, req, resp):
+        resp.text = 'Hello World'
+```
+
+When enabled, query parameters are normalized (sorted) to avoid cache misses due to parameter reordering.
 
 ## Development
 
