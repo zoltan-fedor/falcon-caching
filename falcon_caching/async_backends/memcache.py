@@ -101,8 +101,10 @@ class MemcachedCache(BaseCache):
 
     def _normalize_timeout(self, timeout):
         timeout = BaseCache._normalize_timeout(self, timeout)
-        if timeout > 0:
-            timeout = int(time()) + timeout
+        # despite its documentation, emcache definitely interprets values smaller than 30 days (in seconds) as relative delta
+        # for values greater than 30 days, it's bizzarely inconsistent. See tests/async_tests/test_emcache_exptime.py for details
+        if timeout > 30 * 24 * 3600:
+            timeout = 0
 
         return timeout
 
