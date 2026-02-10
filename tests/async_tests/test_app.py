@@ -318,3 +318,33 @@ def test_caching_content_type_json_only(tmp_path, async_cache_type, eviction_str
         result2 = client.simulate_get('/randrange_cached3')
         assert result1.json['num'] == result2.json['num']
         assert result2.headers['Content-Type'] == 'application/json'
+
+
+def test_query_parameter_handling(async_client):
+    """Test that query parameters are properly included/excluded based on configuration"""
+    # Check the query parameter configuration using the utility function
+    cache = get_cache(async_client.app)
+    include_query_params = cache.cache_config.get('CACHE_INCLUDE_QUERY_PARAMS', False)
+
+    # Clear cache for the endpoint
+    asyncio.get_event_loop().run_until_complete(
+        async_client.app._middleware[1][0].__self__.cache.delete(f"/randrange_cached:GET"))
+
+    # Test with query parameters
+    result1 = async_client.simulate_get('/randrange_cached?sort=asc&filter=active')
+
+    # Test without query parameters
+    result2 = async_client.simulate_get('/randrange_cached')
+
+    # Test with query parameters in a different order
+    result3 = async_client.simulate_get('/randrange_cached?filter=active&sort=asc')
+
+    if include_query_params:
+        # Query params should be included and sorted
+        # Different query params should result in different cache entries
+        assert result1.json['num'] != result2.json['num']
+        assert result1.json['num'] == result3.json['num']
+    else:
+        # Query params should be excluded
+        # Same cache key should result in same cached value
+        assert result1.json['num'] == result2.json['num'] == result3.json['num']

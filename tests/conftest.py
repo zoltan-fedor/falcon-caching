@@ -68,6 +68,12 @@ CACHE_BUSTING_METHODS = [
     'DELETE'
 ]
 
+# including query parameters or not
+QUERY_PARAM_CONFIGS = [
+    {'CACHE_INCLUDE_QUERY_PARAMS': True},
+    {'CACHE_INCLUDE_QUERY_PARAMS': False},
+]
+
 # we want to test the pruning, so we set the threshold low
 # instead of the default 500
 CACHE_THRESHOLD = 5
@@ -94,7 +100,7 @@ def pytest_sessionfinish(session, exitstatus):
 
 # parametrized fixture to create caches with different types (eg backends)
 @pytest.fixture(params=CACHE_TYPES)
-def caches(request, tmp_path):
+def caches(request, tmp_path, query_param_config):
     """ Time-based cache parametrized to generate a cache
     for each cache_type (eg backend)
     """
@@ -129,7 +135,8 @@ def caches(request, tmp_path):
                     'CACHE_TYPE': request.param,
                     'CACHE_THRESHOLD': CACHE_THRESHOLD,
                     'CACHE_DIR': tmp_path if request.param == 'filesystem' else None,
-                    'CACHE_REDIS_PORT': REDIS_PORT
+                    'CACHE_REDIS_PORT': REDIS_PORT,
+                    **query_param_config, # this unpacks to either {'CACHE_INCLUDE_QUERY_PARAMS': True} or {...: False}
                 }
             )
         for eviction_strategy in EVICTION_STRATEGIES
@@ -139,7 +146,7 @@ def caches(request, tmp_path):
 
 # parametrized fixture to create caches with different types (eg backends)
 @pytest.fixture(params=ASYNC_CACHE_TYPES)
-def async_caches(request, tmp_path):
+def async_caches(request, tmp_path, query_param_config):
     """Time-based cache parametrized to generate a cache
     for each cache_type (eg backend)
     """
@@ -165,7 +172,8 @@ def async_caches(request, tmp_path):
                     'CACHE_TYPE': request.param,
                     'CACHE_THRESHOLD': CACHE_THRESHOLD,
                     'CACHE_DIR': tmp_path if request.param == 'filesystem' else None,
-                    'CACHE_REDIS_PORT': REDIS_PORT
+                    'CACHE_REDIS_PORT': REDIS_PORT,
+                    **query_param_config,
                 }
             )
         for eviction_strategy in EVICTION_STRATEGIES
@@ -432,4 +440,12 @@ def async_client(async_app):
     ids=[method.__name__ for method in SUPPORTED_HASH_FUNCTIONS],
 )
 def hash_method(request):
+    return request.param
+
+@pytest.fixture(
+    params=QUERY_PARAM_CONFIGS,
+    ids=['use-query-params', 'ignore-query-params']
+)
+def query_param_config(request):
+    """Provides configurations for whether query parameters used for caching keys"""
     return request.param

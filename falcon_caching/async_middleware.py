@@ -4,6 +4,7 @@ import logging
 import re
 import msgpack
 from typing import TYPE_CHECKING, Any, Dict, Tuple
+from urllib.parse import parse_qsl, urlencode
 
 if TYPE_CHECKING:
     from falcon_caching.async_cache import AsyncCache
@@ -139,9 +140,11 @@ class Middleware:
 
             await self.cache.set(key, value, timeout=timeout)
 
-    @staticmethod
-    async def generate_cache_key(req, method: str = None) -> str:
-        """ Generate the cache key from the request using the path and the method """
+    async def generate_cache_key(self, req, method: str = None) -> str:
+        """
+        Generate the cache key from the request using the path and the method. A manually specified method
+        is useful for evicting previously cached responses when a resource has been updated via PUT, etc.
+        """
 
         path = req.path
         if path.endswith('/'):
@@ -150,7 +153,21 @@ class Middleware:
         if not method:
             method = req.method
 
-        return f'{path}:{method.upper()}'
+        # Check if query parameters should be included in cache key
+        # This can be configured globally via CACHE_INCLUDE_QUERY_PARAMS or
+        # overridden per endpoint via decorator and injected into req.context
+        if req.context.get('cache_include_query_params') is None:
+            include_query_params = self.cache_config['CACHE_INCLUDE_QUERY_PARAMS']
+        else:
+            include_query_params = req.context.get('cache_include_query_params')
+
+        if include_query_params and req.query_string:
+            # Normalize query parameters by sorting them alphabetically
+            query_params = parse_qsl(req.query_string)
+            normalized_query_string = urlencode(sorted(query_params))
+            return f'{path}:{method.upper()}?{normalized_query_string}'
+        else:
+            return f'{path}:{method.upper()}'
 
     async def serialize(self, req, resp, resource) -> bytes:
         """ Serializes the response, so it can be cached.

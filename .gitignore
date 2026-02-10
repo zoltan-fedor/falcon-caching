@@ -16,3 +16,4 @@ Pipfile.lock
 todos.txt
 tests/sentinel.conf
 bin/
+._*
